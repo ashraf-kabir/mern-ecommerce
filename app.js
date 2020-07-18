@@ -5,12 +5,13 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const expressValidator = require('express-validator');
 require('dotenv').config();
-
-const app = express();
-
 // import routes
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const categoryRoutes = require('./routes/category');
+
+// app
+const app = express();
 
 // db connection
 mongoose
@@ -32,8 +33,8 @@ app.use(expressValidator());
 
 // routes middleware
 app.use('/api', authRoutes);
-
 app.use('/api', userRoutes);
+app.use('/api', categoryRoutes);
 
 const port = process.env.PORT || 5000;
 
