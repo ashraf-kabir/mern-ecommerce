@@ -3,7 +3,6 @@ const _ = require('lodash');
 const fs = require('fs');
 const Product = require('../models/product');
 const { errorHandler } = require('../helpers/dbErrorHandler');
-const product = require('../models/product');
 
 exports.productById = (req, res, next, id) => {
   Product.findById(id)
@@ -30,7 +29,7 @@ exports.create = (req, res) => {
   form.parse(req, (err, fields, files) => {
     if (err) {
       return res.status(400).json({
-        error: "Image couldn't be uploaded",
+        error: 'Image could not be uploaded',
       });
     }
     // check for all fields
@@ -41,7 +40,7 @@ exports.create = (req, res) => {
       !description ||
       !price ||
       !category ||
-      !category ||
+      !quantity ||
       !shipping
     ) {
       return res.status(400).json({
@@ -51,12 +50,14 @@ exports.create = (req, res) => {
 
     let product = new Product(fields);
 
+    // 1kb = 1000
+    // 1mb = 1000000
+
     if (files.photo) {
-      // console.log('FILES PHOTO: ', files.photo);
-      // 1 MB = 1000000 Bytes
+      // console.log("FILES PHOTO: ", files.photo);
       if (files.photo.size > 1000000) {
         return res.status(400).json({
-          error: 'Image should be less than 1MB in size',
+          error: 'Image should be less than 1mb in size',
         });
       }
       product.photo.data = fs.readFileSync(files.photo.path);
@@ -65,8 +66,9 @@ exports.create = (req, res) => {
 
     product.save((err, result) => {
       if (err) {
+        console.log('PRODUCT CREATE ERROR ', err);
         return res.status(400).json({
-          error: errorHandler(error),
+          error: errorHandler(err),
         });
       }
       res.json(result);
@@ -79,7 +81,7 @@ exports.remove = (req, res) => {
   product.remove((err, deletedProduct) => {
     if (err) {
       return res.status(400).json({
-        error: errorHandler(error),
+        error: errorHandler(err),
       });
     }
     res.json({
@@ -94,34 +96,21 @@ exports.update = (req, res) => {
   form.parse(req, (err, fields, files) => {
     if (err) {
       return res.status(400).json({
-        error: "Image couldn't be uploaded",
-      });
-    }
-    // check for all fields
-    const { name, description, price, category, quantity, shipping } = fields;
-
-    if (
-      !name ||
-      !description ||
-      !price ||
-      !category ||
-      !category ||
-      !shipping
-    ) {
-      return res.status(400).json({
-        error: 'All fields are required',
+        error: 'Image could not be uploaded',
       });
     }
 
     let product = req.product;
     product = _.extend(product, fields);
 
+    // 1kb = 1000
+    // 1mb = 1000000
+
     if (files.photo) {
-      // console.log('FILES PHOTO: ', files.photo);
-      // 1 MB = 1000000 Bytes
+      // console.log("FILES PHOTO: ", files.photo);
       if (files.photo.size > 1000000) {
         return res.status(400).json({
-          error: 'Image should be less than 1MB in size',
+          error: 'Image should be less than 1mb in size',
         });
       }
       product.photo.data = fs.readFileSync(files.photo.path);
@@ -131,7 +120,7 @@ exports.update = (req, res) => {
     product.save((err, result) => {
       if (err) {
         return res.status(400).json({
-          error: errorHandler(error),
+          error: errorHandler(err),
         });
       }
       res.json(result);
@@ -141,8 +130,8 @@ exports.update = (req, res) => {
 
 /**
  * sell / arrival
- * by sell = /products?soldBy=sold&order=desc&limit=4
- * by arrival = /products?soldBy=createdAt&order=desc&limit=4
+ * by sell = /products?sortBy=sold&order=desc&limit=4
+ * by arrival = /products?sortBy=createdAt&order=desc&limit=4
  * if no params are sent, then all products are returned
  */
 
@@ -151,8 +140,7 @@ exports.list = (req, res) => {
   let sortBy = req.query.sortBy ? req.query.sortBy : '_id';
   let limit = req.query.limit ? parseInt(req.query.limit) : 6;
 
-  product
-    .find()
+  Product.find()
     .select('-photo')
     .populate('category')
     .sort([[sortBy, order]])
@@ -171,6 +159,7 @@ exports.list = (req, res) => {
  * it will find the products based on the req product category
  * other products that has the same category, will be returned
  */
+
 exports.listRelated = (req, res) => {
   let limit = req.query.limit ? parseInt(req.query.limit) : 6;
 
@@ -259,12 +248,12 @@ exports.photo = (req, res, next) => {
 };
 
 exports.listSearch = (req, res) => {
-  // create query object to hold search value
+  // create query object to hold search value and category value
   const query = {};
   // assign search value to query.name
   if (req.query.search) {
     query.name = { $regex: req.query.search, $options: 'i' };
-    // assign category value to query.category
+    // assigne category value to query.category
     if (req.query.category && req.query.category != 'All') {
       query.category = req.query.category;
     }
