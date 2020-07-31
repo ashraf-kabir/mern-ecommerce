@@ -1,8 +1,8 @@
 {
   "name": "mern-ecommerce",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "ecommerce site",
+  "main": "app.js",
   "scripts": {
     "start": "node server",
     "server": "nodemon app.js",
