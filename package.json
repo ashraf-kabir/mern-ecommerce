@@ -2,9 +2,14 @@
   "name": "mern-ecommerce",
   "version": "1.0.0",
   "description": "ecommerce site",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node app.js"
+    "client-install": "npm install --prefix client",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "keywords": [],
   "author": "Ashraf Kabir",
@@ -13,6 +18,7 @@
     "body-parser": "^1.19.0",
     "braintree": "^2.23.0",
     "concurrently": "^5.2.0",
+    "config": "^3.3.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
