@@ -11,7 +11,7 @@
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ashraf Kabir",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
