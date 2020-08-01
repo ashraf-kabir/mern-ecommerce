@@ -6,8 +6,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const path = require('path');
 const expressValidator = require('express-validator');
-const connectDB = require('./config/db');
-require('dotenv').config();
+// require('dotenv').config();
 // import routes
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
@@ -20,18 +19,22 @@ const orderRoutes = require('./routes/order');
 const app = express();
 
 // db connection
-// mongoose
-//   .connect(process.env.MONGO_URI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => console.log('MongoDB Connected'));
+mongoose
+  .connect(
+    process.env.MONGODB_URI ||
+      'mongodb+srv://ashraf:60391881@mern-ecommerce.hg4yw.mongodb.net/testecommerce?retryWrites=true&w=majority',
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
+  .then(() => console.log('MongoDB Connected'));
 
-// mongoose.connection.on('error', (err) => {
-//   console.log(`DB connection error: ${err.message}`);
-// });
+mongoose.connection.on('error', (err) => {
+  console.log(`DB connection error: ${err.message}`);
+});
 
-connectDB();
+// connectDB();
 
 // middlewares
 app.use(morgan('dev'));
