@@ -19,10 +19,6 @@ const orderRoutes = require('./routes/order');
 // app
 const app = express();
 
-// Body parser middleware
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
 // db connection
 // mongoose
 //   .connect(process.env.MONGO_URI, {
