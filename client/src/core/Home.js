@@ -43,24 +43,31 @@ const Home = () => {
       className='container-fluid'
     >
       <Search />
-      <h2 className='mb-4'>New Arrivals</h2>
       <div className='row'>
-        {productsByArrival.map((product, i) => (
-          <div key={i} className='col-md-4 col-sm-12'>
-            <Card product={product} />
+        <div className='col-md-1'></div>
+        <div className='col-md-10'>
+          <h2 className='mb-2'>New Arrivals</h2>
+          <div className='row'>
+            {productsByArrival.map((product, i) => (
+              <div key={i} className='col-md-4 col-sm-12'>
+                <Card product={product} />
+              </div>
+            ))}
           </div>
-        ))}
+
+          <h2 className='mb-2 mt-4'>Best Sellers</h2>
+          <div className='row'>
+            {productsBySell.map((product, i) => (
+              <div key={i} className='col-md-4 col-sm-12'>
+                <Card product={product} />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className='col-md-1'></div>
       </div>
 
-      <h2 className='mb-4'>Best Sellers</h2>
-      <div className='row'>
-        {productsBySell.map((product, i) => (
-          <div key={i} className='col-md-4 col-sm-12'>
-            <Card product={product} />
-          </div>
-        ))}
-      </div>
-      <Copyright/>
+      <Copyright />
     </Layout>
   );
 };

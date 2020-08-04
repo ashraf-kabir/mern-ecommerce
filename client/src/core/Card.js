@@ -11,6 +11,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import DeleteIcon from '@material-ui/icons/Delete';
 import Grid from '@material-ui/core/Grid';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -19,19 +20,6 @@ import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 
 import { addItem, updateItem, removeItem } from './cartHelpers';
-
-function Copyright() {
-  return (
-    <Typography variant='body2' color='textSecondary' align='center'>
-      {'Copyright © '}
-      <Link color='inherit' href='#'>
-        MERN E-commerce
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -45,8 +33,8 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4),
   },
   cardGrid: {
-    paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(8),
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
   },
   card: {
     height: '100%',
@@ -81,9 +69,9 @@ const Card = ({
     return (
       showViewProductButton && (
         <Link href={`/product/${product._id}`} className='mr-2'>
-          <button className='btn btn-outline-primary mt-2 mb-2'>
+          <Button variant='contained' color='primary'>
             View Product
-          </button>
+          </Button>
         </Link>
       )
     );
@@ -103,12 +91,9 @@ const Card = ({
   const showAddToCartBtn = (showAddToCartButton) => {
     return (
       showAddToCartButton && (
-        <button
-          onClick={addToCart}
-          className='btn btn-outline-warning mt-2 mb-2 card-btn-1'
-        >
+        <Button onClick={addToCart} variant='outlined' color='secondary'>
           Add to cart
-        </button>
+        </Button>
       )
     );
   };
@@ -132,7 +117,7 @@ const Card = ({
   const showCartUpdateOptions = (cartUpdate) => {
     return (
       cartUpdate && (
-        <div>
+        <div className='mt-2'>
           <div className='input-group mb-3'>
             <div className='input-group-prepend'>
               <span className='input-group-text'>Adjust Quantity</span>
@@ -152,15 +137,18 @@ const Card = ({
   const showRemoveButton = (showRemoveProductButton) => {
     return (
       showRemoveProductButton && (
-        <button
+        <Button
           onClick={() => {
             removeItem(product._id);
             setRun(!run); // run useEffect in parent Cart
           }}
-          className='btn btn-outline-danger mt-2 mb-2'
+          variant='contained'
+          color='secondary'
+          className={classes.button}
+          startIcon={<DeleteIcon />}
         >
           Remove Product
-        </button>
+        </Button>
       )
     );
   };
@@ -216,9 +204,11 @@ const Card = ({
               </p>
               {showStock(product.quantity)}
               <br></br>
-              {showViewButton(showViewProductButton)}
-              {showAddToCartBtn(showAddToCartButton)}
-              {showRemoveButton(showRemoveProductButton)}
+              <span>
+                {showViewButton(showViewProductButton)}
+                {showAddToCartBtn(showAddToCartButton)}
+                {showRemoveButton(showRemoveProductButton)}
+              </span>
               {showCartUpdateOptions(cartUpdate)}
             </CardContent>
           </CardM>
