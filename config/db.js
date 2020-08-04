@@ -4,7 +4,7 @@ const db = config.get('MONGODB_URI');
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || db, {
+    await mongoose.connect(db || 'mongodb+srv://ashraf:60391881@mern-ecommerce.hg4yw.mongodb.net/testecommerce?retryWrites=true&w=majority', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
