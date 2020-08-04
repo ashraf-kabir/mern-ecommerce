@@ -14,22 +14,10 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
-// import { Link } from 'react-router-dom';
+import Copyright from '../core/Copyright';
+
 import Layout from '../core/Layout';
 import { signup } from '../auth';
-
-function Copyright() {
-  return (
-    <Typography variant='body2' color='textSecondary' align='center'>
-      {'Copyright © '}
-      <Link color='inherit' href='#'>
-        MERN E-commerce
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -106,40 +94,6 @@ export default function Signup() {
   const classes = useStyles();
 
   const signUpForm = () => (
-    // <form>
-    //   <div className='form-group'>
-    //     <label className='text-muted'>Name</label>
-    //     <input
-    //       onChange={handleChange('name')}
-    //       type='text'
-    //       className='form-control'
-    //       value={name}
-    //     />
-    //   </div>
-
-    //   <div className='form-group'>
-    //     <label className='text-muted'>Email</label>
-    //     <input
-    //       onChange={handleChange('email')}
-    //       type='email'
-    //       className='form-control'
-    //       value={email}
-    //     />
-    //   </div>
-
-    //   <div className='form-group'>
-    //     <label className='text-muted'>Password</label>
-    //     <input
-    //       onChange={handleChange('password')}
-    //       type='password'
-    //       className='form-control'
-    //       value={password}
-    //     />
-    //   </div>
-    //   <button onClick={clickSubmit} className='btn btn-primary'>
-    //     Submit
-    //   </button>
-    // </form>
     <Container component='main' maxWidth='xs'>
       {showSuccess()}
       {showError()}
@@ -217,9 +171,6 @@ export default function Signup() {
           </Grid>
         </form>
       </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
     </Container>
   );
 
@@ -230,6 +181,7 @@ export default function Signup() {
       className='container col-md-8 offset-md-2'
     >
       {signUpForm()}
+      <Copyright />
     </Layout>
   );
 }
