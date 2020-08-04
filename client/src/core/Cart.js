@@ -5,6 +5,8 @@ import { getCart } from './cartHelpers';
 import Card from './Card';
 import Checkout from './Checkout';
 
+import Copyright from './Copyright';
+
 const Cart = () => {
   const [items, setItems] = useState([]);
   const [run, setRun] = useState(false);
@@ -56,6 +58,7 @@ const Cart = () => {
           <Checkout products={items} setRun={setRun} run={run} />
         </div>
       </div>
+      <Copyright />
     </Layout>
   );
 };

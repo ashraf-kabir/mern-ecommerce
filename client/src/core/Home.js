@@ -4,6 +4,8 @@ import { getProducts } from './apiCore';
 import Card from './Card';
 import Search from './Search';
 
+import Copyright from './Copyright';
+
 const Home = () => {
   const [productsBySell, setProductsBySell] = useState([]);
   const [productsByArrival, setProductsByArrival] = useState([]);
@@ -58,6 +60,7 @@ const Home = () => {
           </div>
         ))}
       </div>
+      <Copyright/>
     </Layout>
   );
 };

@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
+import Typography from '@material-ui/core/Typography';
+import Link from '@material-ui/core/Link';
+import Box from '@material-ui/core/Box';
 import Card from './Card';
 import { getCategories, getFilteredProducts } from './apiCore';
 import Checkbox from './Checkbox';
 import RadioBox from './RadioBox';
 import { prices } from './fixedPrices';
+
+import Copyright from './Copyright';
 
 const Shop = () => {
   const [myFilters, setMyFilters] = useState({
@@ -103,7 +108,7 @@ const Shop = () => {
       className='container-fluid'
     >
       <div className='row'>
-        <div className='col-4'>
+        <div className='col-md-3'>
           <h4>Filter by categories</h4>
           <ul>
             <Checkbox
@@ -121,7 +126,7 @@ const Shop = () => {
           </div>
         </div>
 
-        <div className='col-8'>
+        <div className='col-md-9'>
           <h2 className='mb-2'>Products</h2>
           <div className='row'>
             {filteredResults.map((product, i) => (
@@ -134,6 +139,7 @@ const Shop = () => {
           {loadMoreButton()}
         </div>
       </div>
+      <Copyright />
     </Layout>
   );
 };
