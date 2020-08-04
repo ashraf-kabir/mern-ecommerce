@@ -85,6 +85,24 @@ export default function Signup() {
     }); // sending js object
   };
 
+  const showError = () => (
+    <div
+      className='alert alert-danger'
+      style={{ display: error ? '' : 'none' }}
+    >
+      {error}
+    </div>
+  );
+
+  const showSuccess = () => (
+    <div
+      className='alert alert-info'
+      style={{ display: success ? '' : 'none' }}
+    >
+      New account is created. Please <Link to='/signin'>Signin</Link>.
+    </div>
+  );
+
   const classes = useStyles();
 
   const signUpForm = () => (
@@ -203,24 +221,6 @@ export default function Signup() {
         <Copyright />
       </Box>
     </Container>
-  );
-
-  const showError = () => (
-    <div
-      className='alert alert-danger'
-      style={{ display: error ? '' : 'none' }}
-    >
-      {error}
-    </div>
-  );
-
-  const showSuccess = () => (
-    <div
-      className='alert alert-info'
-      style={{ display: success ? '' : 'none' }}
-    >
-      New account is created. Please <Link to='/signin'>Signin</Link>.
-    </div>
   );
 
   return (
