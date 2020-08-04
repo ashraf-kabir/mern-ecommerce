@@ -1,3 +1,1 @@
-require('dotenv').config();
-
 export const API = process.env.REACT_APP_API_URL || 'https://ecommerce-ak.herokuapp.com/api';

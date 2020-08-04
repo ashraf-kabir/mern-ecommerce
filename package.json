@@ -16,11 +16,7 @@
   },
   "keywords": [],
   "author": "Ashraf Kabir",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ashraf-kabir/mern-ecommerce/issues"
-  },
-  "homepage": "https://github.com/ashraf-kabir/mern-ecommerce#readme",
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
