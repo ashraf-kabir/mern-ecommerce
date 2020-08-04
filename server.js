@@ -14,12 +14,29 @@ const categoryRoutes = require('./routes/category');
 const productRoutes = require('./routes/product');
 const braintreeRoutes = require('./routes/braintree');
 const orderRoutes = require('./routes/order');
-const connectDB = require('./config/db');
 
 // app
 const app = express();
 
 // db connection
+const connectDB = async () => {
+  try {
+    await mongoose.connect(
+      'mongodb+srv://ashraf:60391881@mern-ecommerce.hg4yw.mongodb.net/testecommerce?retryWrites=true&w=majority',
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+      }
+    );
+    console.log('MongoDB Connected');
+  } catch (err) {
+    console.error(err.message);
+    // exit process with failure
+    process.exit(1);
+  }
+};
 connectDB();
 
 // middlewares
