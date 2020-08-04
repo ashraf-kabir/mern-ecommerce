@@ -44,9 +44,8 @@
     ```
     ##### Instructions:
     1. for mongodb atlas database creation follow this tutorial->https://www.youtube.com/watch?v=KKyag6t98g8
-    2. you can use any random string as jwtSecret
-    3. for generating github token follow this link->https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token
-    4. #### note: gitignore the default.json file
+    2. you can use any random string as JWTSECRET
+    3. #### note: add default.json on .gitignore
 
 4. <b>deploy this project</b> on your local server by using this command
     ```bash
