@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Button from '@material-ui/core/Button';
 import {
   getProducts,
   getBraintreeClientToken,
@@ -55,7 +56,9 @@ const Checkout = ({ products, setRun = (f) => f, run = undefined }) => {
       <div>{showDropIn()}</div>
     ) : (
       <Link to='/signin'>
-        <button className='btn btn-primary'>Sign in to checkout</button>
+        <Button variant='contained' color='primary'>
+          Sign in to checkout
+        </Button>
       </Link>
     );
   };

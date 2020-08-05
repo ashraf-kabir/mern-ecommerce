@@ -1,5 +1,5 @@
 import React from 'react';
-import Menu from './Menu';
+import Menu from './MenuM';
 import '../styles.css';
 
 const Layout = ({
@@ -10,7 +10,7 @@ const Layout = ({
 }) => (
   <div>
     <Menu />
-    <div className='jumbotron'>
+    <div className='jumbotron mt-5'>
       <h2>{title}</h2>
       <p className='lead'>{description}</p>
     </div>

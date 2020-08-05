@@ -62,16 +62,19 @@ const Search = () => {
 
   const searchedProducts = (results = []) => {
     return (
-      <div>
-        <h2 className='mt-4 mb-4'>{searchMessage(searched, results)}</h2>
-
-        <div className='row'>
-          {results.map((product, i) => (
-            <div className='col-12 mb-3'>
-              <Card key={i} product={product} />
-            </div>
-          ))}
+      <div className='row'>
+        <div className='col-md-1'></div>
+        <div className='col-md-10'>
+          <h2 className='mt-4 mb-4'>{searchMessage(searched, results)}</h2>
+          <div className='row'>
+            {results.map((product, i) => (
+              <div className='col-md-4 mb-3'>
+                <Card key={i} product={product} />
+              </div>
+            ))}
+          </div>
         </div>
+        <div className='col-md-1'></div>
       </div>
     );
   };
