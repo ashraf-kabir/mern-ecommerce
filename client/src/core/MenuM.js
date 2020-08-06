@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, forceUpdate } from 'react-router-dom';
 import { signout, isAuthenticated } from '../auth';
 import { itemTotal } from './cartHelpers';
 
@@ -253,7 +253,7 @@ const MaterialAppBar = ({ history }) => {
     <div className={classes.grow}>
       <AppBar position='fixed'>
         <Toolbar>
-          <Link style={isActive(history, '/')} to='/'>
+          <a href='/' style={{ color: '#ffffff' }}>
             <IconButton
               edge='start'
               className={classes.menuButton}
@@ -262,13 +262,12 @@ const MaterialAppBar = ({ history }) => {
             >
               <StoreIcon />
             </IconButton>
-          </Link>
-          
-          <Link style={isActive(history, '/')} to='/'>
+          </a>
+          <a href='/' style={{ color: '#ffffff', textDecoration: 'none' }}>
             <Typography className={classes.title} variant='h6' noWrap>
               BRAND
             </Typography>
-          </Link>
+          </a>
 
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
