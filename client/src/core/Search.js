@@ -1,6 +1,24 @@
 import React, { useState, useEffect } from 'react';
+
+import { makeStyles } from '@material-ui/core/styles';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+
 import { getCategories, list } from './apiCore';
 import Card from './Card';
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}));
 
 const Search = () => {
   const [data, setData] = useState({
@@ -79,19 +97,43 @@ const Search = () => {
     );
   };
 
+  const classes = useStyles();
+
   const searchForm = () => (
     <form onSubmit={searchSubmit}>
       <span className='input-group-text'>
         <div className='input-group input-group-lg'>
           <div className='input-group-prepend'>
-            <select className='btn mr-2' onChange={handleChange('category')}>
+            {/* <select className='btn mr-2' onChange={handleChange('category')}>
               <option value='All'>All</option>
               {categories.map((c, i) => (
                 <option key={i} value={c._id}>
                   {c.name}
                 </option>
               ))}
-            </select>
+            </select> */}
+            <FormControl className={classes.formControl}>
+              <InputLabel id='demo-simple-select-helper-label'>
+                Select
+              </InputLabel>
+              <Select
+                labelId='demo-simple-select-placeholder-label-label'
+                id='demo-simple-select-placeholder-label'
+                value={data.name}
+                onChange={handleChange('category')}
+                displayEmpty
+                className={classes.selectEmpty}
+              >
+                <MenuItem value='All'>
+                  <em>All</em>
+                </MenuItem>
+                {categories.map((c, i) => (
+                  <MenuItem key={i} value={c._id}>
+                    {c.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
 
           <input
