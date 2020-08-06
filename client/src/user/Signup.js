@@ -109,7 +109,7 @@ export default function Signup() {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                autoComplete='name'
+                autoComplete='off'
                 onChange={handleChange('name')}
                 type='text'
                 name='name'
@@ -133,7 +133,7 @@ export default function Signup() {
                 onChange={handleChange('email')}
                 type='email'
                 value={email}
-                autoComplete='email'
+                autoComplete='off'
               />
             </Grid>
             <Grid item xs={12}>
