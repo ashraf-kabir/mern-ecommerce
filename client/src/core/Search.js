@@ -6,6 +6,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import SearchIcon from '@material-ui/icons/Search';
 
 import { getCategories, list } from './apiCore';
 import Card from './Card';
@@ -17,6 +20,15 @@ const useStyles = makeStyles((theme) => ({
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
+  },
+  tField: {
+    width: 800,
+    marginTop: 2,
+  },
+  root: {
+    '& > *': {
+      margin: theme.spacing(2),
+    },
   },
 }));
 
@@ -100,18 +112,10 @@ const Search = () => {
   const classes = useStyles();
 
   const searchForm = () => (
-    <form onSubmit={searchSubmit}>
+    <form onSubmit={searchSubmit} className={classes.root}>
       <span className='input-group-text'>
         <div className='input-group input-group-lg'>
           <div className='input-group-prepend'>
-            {/* <select className='btn mr-2' onChange={handleChange('category')}>
-              <option value='All'>All</option>
-              {categories.map((c, i) => (
-                <option key={i} value={c._id}>
-                  {c.name}
-                </option>
-              ))}
-            </select> */}
             <FormControl className={classes.formControl}>
               <InputLabel id='demo-simple-select-helper-label'>
                 Select
@@ -136,15 +140,20 @@ const Search = () => {
             </FormControl>
           </div>
 
-          <input
-            type='search'
-            className='form-control'
+          <TextField
             onChange={handleChange('search')}
-            placeholder='Search by name'
+            id='outlined-basic'
+            label={<span><SearchIcon/>Search by name</span>}
+            variant='outlined'
+            className={classes.tField}
+            autoComplete='off'
           />
-        </div>
-        <div className='btn input-group-append' style={{ border: 'none' }}>
-          <button className='input-group-text'>Search</button>
+
+          <div className='ml-3 mt-2' style={{ border: 'none' }}>
+            <Button ml={2} variant='contained' color='primary' type='submit'>
+              Search
+            </Button>
+          </div>
         </div>
       </span>
     </form>
