@@ -98,8 +98,8 @@ const Dashboard = () => {
       className='container-fluid'
     >
       <div className='row'>
-        <div className='col-3'>{userLinks()}</div>
-        <div className='col-9'>
+        <div className='col-md-3'>{userLinks()}</div>
+        <div className='col-md-9'>
           {userInfo()}
           {purchaseHistory(history)}
         </div>
