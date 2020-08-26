@@ -21,7 +21,7 @@
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "braintree": "^2.23.0",
-    "concurrently": "^5.2.0",
+    "concurrently": "^5.3.0",
     "config": "^3.3.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
