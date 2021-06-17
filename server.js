@@ -22,7 +22,7 @@ const app = express();
 const connectDB = async () => {
   try {
     await mongoose.connect(
-      process.env.MONGOURI || 'mongodb+srv://ashraf:60391881@mern-ecommerce.hg4yw.mongodb.net/testecommerce?retryWrites=true&w=majority',
+      process.env.MONGOURI,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
