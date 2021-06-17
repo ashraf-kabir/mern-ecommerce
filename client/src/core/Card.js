@@ -47,6 +47,9 @@ const useStyles = makeStyles((theme) => ({
   cardContent: {
     flexGrow: 1,
   },
+  productDescription: {
+    height: '100px',
+  },
   footer: {
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(6),
@@ -194,7 +197,7 @@ const Card = ({
               <Typography gutterBottom variant='h5' component='h2'>
                 {product.name}
               </Typography>
-              <Typography>{product.description.substring(0, 100)}</Typography>
+              <Typography className={classes.productDescription}>{product.description.substring(0, 100)}</Typography>
               <p className='black-10'>Price: ${product.price}</p>
               <p className='black-9'>
                 Category: {product.category && product.category.name}{' '}

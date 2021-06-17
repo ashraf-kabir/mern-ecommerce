@@ -151,7 +151,7 @@ const Shop = () => {
           <h2 className='mb-2'>Products</h2>
           <div className='row'>
             {filteredResults.map((product, i) => (
-              <div key={i} className='col-md-4 col-sm-12'>
+              <div key={i} className='col-xl-4 col-lg-6 col-md-12 col-sm-12'>
                 <Card product={product} />
               </div>
             ))}
