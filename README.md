@@ -30,7 +30,7 @@
     ```
     (ctrl+x to save & nano follow instruction there)
     
-    ##### sample code for env.json
+    ##### sample code for backend .env
     ```env
     MONGODB_URI=YOUR_MONGODB_URI
     JWT_SECRET=YOUR_JWT_SECRET
@@ -44,7 +44,7 @@
     cd mern-ecommerce/client
     sudo nano .env
     ```
-
+    ##### sample code for frontend .env
     ```env
     REACT_APP_API_URL=YOUR_API_URL
     ```
