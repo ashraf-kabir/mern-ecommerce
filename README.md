@@ -63,6 +63,12 @@
     ```
     #### note: both backend & frontend server will start at once with the above command.
 
+6. #### Database Structure: (Table: columns)
+    1. categories: _id, name, createdAt, updatedAt;
+    2. orders:  _id, status, products (Array), transaction_id, amount, address, user (Object), createdAt, updatedAt
+    3. products: _id, photo (Object), sold, name, description, price, category, shipping, quantity, createdAt, updatedAt
+    4. users: _id, role, history (Array), name, email, salt, hashed_password, createdAt, updatedAt
+
 ### App Description:
     1. user can view all products
     2. user can view single product
