@@ -11,7 +11,7 @@
     "braintree-web-drop-in-react": "^1.1.1",
     "config": "^3.3.1",
     "fontsource-roboto": "^3.0.3",
-    "moment": "^2.27.0",
+    "moment": "^2.29.2",
     "query-string": "^6.13.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
