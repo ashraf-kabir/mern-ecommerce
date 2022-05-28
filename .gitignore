@@ -1,3 +1,5 @@
 node_modules/
 .env
-default.json
+server.js
+controllers/auth.js
+controllers/braintree.js
