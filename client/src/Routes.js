@@ -17,7 +17,6 @@ import Profile from './user/Profile';
 import ManageProducts from './admin/ManageProducts';
 import UpdateProduct from './admin/UpdateProduct';
 import CategoryList from './admin/CategoryList';
-import ProductList from './admin/ProductList';
 import NotFound from './core/NotFound';
 
 const Routes = () => {
@@ -42,8 +41,7 @@ const Routes = () => {
           component={UpdateProduct}
           exact
         />
-        <AdminRoute path='/categories' component={CategoryList} exact />
-        <AdminRoute path='/products' component={ProductList} exact />
+        <AdminRoute path='/admin/categories' component={CategoryList} exact />
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>
