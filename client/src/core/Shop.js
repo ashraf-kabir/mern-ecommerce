@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
-import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
-import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Card from './Card';
 import { getCategories, getFilteredProducts } from './apiCore';
