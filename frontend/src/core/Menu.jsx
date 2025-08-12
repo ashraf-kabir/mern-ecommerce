@@ -1,350 +1,252 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signout, isAuthenticated } from '../auth';
 import { itemTotal } from './cartHelpers';
 
-import { alpha, styled } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Badge from '@mui/material/Badge';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import MoreIcon from '@mui/icons-material/MoreVert';
-
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import HomeIcon from '@mui/icons-material/Home';
-import StorefrontIcon from '@mui/icons-material/Storefront';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import StoreIcon from '@mui/icons-material/Store';
-
-// Styled components using MUI v5 styled API
-const GrowDiv = styled('div')(({ theme }) => ({
-  flexGrow: 1,
-}));
-
-const DesktopSection = styled('div')(({ theme }) => ({
-  display: 'none',
-  [theme.breakpoints.up('md')]: {
-    display: 'flex',
-  },
-}));
-
-const MobileSection = styled('div')(({ theme }) => ({
-  display: 'flex',
-  [theme.breakpoints.up('md')]: {
-    display: 'none',
-  },
-}));
-
-const SearchWrapper = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
-}));
-
-const isActive = (path, currentPath) => {
-  return currentPath === path
-    ? { color: '#ff9900', textDecoration: 'none' }
-    : { color: '#ffffff', textDecoration: 'none' };
-};
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Badge,
+  Menu,
+  MenuItem,
+  Box,
+  Button,
+  Divider,
+  ListItemIcon,
+  ListItemText,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
+import {
+  ShoppingCart,
+  Home,
+  Storefront,
+  Dashboard,
+  AccountCircle,
+  PersonAdd,
+  ExitToApp,
+  Store,
+  Menu as MenuIcon,
+} from '@mui/icons-material';
 
 const MaterialAppBar = () => {
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [mobileAnchorEl, setMobileAnchorEl] = React.useState(null);
   const currentPath = window.location.pathname;
 
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  // const handleProfileMenuOpen = (event) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
+  const isMobileMenuOpen = Boolean(mobileAnchorEl);
 
   const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
+    setMobileAnchorEl(event.currentTarget);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileAnchorEl(null);
   };
 
   const handleSignout = () => {
     signout(() => {
       navigate('/');
     });
+    handleMobileMenuClose();
   };
 
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
+  const isActive = (path) => currentPath === path;
+
+  // Navigation items data
+  const navItems = [
+    { path: '/', label: 'Home', icon: <Home />, show: true },
+    { path: '/shop', label: 'Shop', icon: <Storefront />, show: true },
+    {
+      path: '/cart',
+      label: 'Cart',
+      icon: (
+        <Badge badgeContent={itemTotal()} color='error'>
+          <ShoppingCart />
+        </Badge>
+      ),
+      show: true,
+    },
+    {
+      path: '/user/dashboard',
+      label: 'Dashboard',
+      icon: <Dashboard />,
+      show: isAuthenticated() && isAuthenticated().user.role === 0,
+    },
+    {
+      path: '/admin/dashboard',
+      label: 'Dashboard',
+      icon: <Dashboard />,
+      show: isAuthenticated() && isAuthenticated().user.role === 1,
+    },
+    {
+      path: '/signin',
+      label: 'Sign In',
+      icon: <AccountCircle />,
+      show: !isAuthenticated(),
+    },
+    {
+      path: '/signup',
+      label: 'Sign Up',
+      icon: <PersonAdd />,
+      show: !isAuthenticated(),
+    },
+  ];
+
+  const renderDesktopNav = () => (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      {navItems.map(
+        (item) =>
+          item.show && (
+            <Button
+              key={item.path}
+              component={Link}
+              to={item.path}
+              startIcon={item.icon}
+              sx={{
+                color: 'white',
+                fontWeight: isActive(item.path) ? 'bold' : 'normal',
+                backgroundColor: isActive(item.path)
+                  ? 'rgba(255, 255, 255, 0.1)'
+                  : 'transparent',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                },
+              }}
+            >
+              {item.label}
+            </Button>
+          )
+      )}
+      {isAuthenticated() && (
+        <Button
+          onClick={handleSignout}
+          startIcon={<ExitToApp />}
+          sx={{
+            color: 'white',
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            },
+          }}
+        >
+          Sign Out
+        </Button>
+      )}
+    </Box>
   );
 
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-  const renderMobileMenu = (
+  const renderMobileMenu = () => (
     <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      anchorEl={mobileAnchorEl}
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
-      sx={{ backgroundColor: '#404040' }}
+      PaperProps={{
+        sx: {
+          width: 250,
+          backgroundColor: theme.palette.primary.main,
+          color: 'white',
+        },
+      }}
+      MenuListProps={{
+        sx: {
+          padding: 0,
+        },
+      }}
     >
-      <MenuItem>
-        <Link style={isActive('/', currentPath)} to='/'>
-          <IconButton aria-label='Home' color='inherit'>
-            <HomeIcon />
-          </IconButton>
-          Home
-        </Link>
-      </MenuItem>
-
-      <MenuItem>
-        <Link style={isActive('/shop', currentPath)} to='/shop'>
-          <IconButton aria-label='Shop' color='inherit'>
-            <StorefrontIcon />
-          </IconButton>
-          Shop
-        </Link>
-      </MenuItem>
-
-      <MenuItem>
-        <Link style={isActive('/cart', currentPath)} to='/cart'>
-          <IconButton aria-label='Cart' color='inherit'>
-            <Badge badgeContent={itemTotal()} color='secondary'>
-              <ShoppingCartIcon />
-            </Badge>
-          </IconButton>
-          Cart
-        </Link>
-      </MenuItem>
-
-      {isAuthenticated() && isAuthenticated().user.role === 0 && (
-        <MenuItem>
-          <Link
-            style={isActive('/user/dashboard', currentPath)}
-            to='/user/dashboard'
-          >
-            <IconButton aria-label='Dashboard' color='inherit'>
-              <DashboardIcon />
-            </IconButton>
-            Dashboard
-          </Link>
-        </MenuItem>
+      {navItems.map(
+        (item) =>
+          item.show && (
+            <MenuItem
+              key={item.path}
+              component={Link}
+              to={item.path}
+              onClick={handleMobileMenuClose}
+              sx={{
+                backgroundColor: isActive(item.path)
+                  ? 'rgba(255, 255, 255, 0.1)'
+                  : 'transparent',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                },
+              }}
+            >
+              <ListItemIcon sx={{ color: 'white' }}>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.label} />
+            </MenuItem>
+          )
       )}
-
-      {isAuthenticated() && isAuthenticated().user.role === 1 && (
-        <MenuItem>
-          <Link
-            style={isActive('/admin/dashboard', currentPath)}
-            to='/admin/dashboard'
-          >
-            <IconButton aria-label='Dashboard' color='inherit'>
-              <DashboardIcon />
-            </IconButton>
-            Dashboard
-          </Link>
-        </MenuItem>
-      )}
-
-      {!isAuthenticated() && (
-        <Fragment>
-          <MenuItem>
-            <Link style={isActive('/signin', currentPath)} to='/signin'>
-              <IconButton aria-label='Signin' color='inherit'>
-                <AccountCircleIcon />
-              </IconButton>
-              Signin
-            </Link>
-          </MenuItem>
-
-          <MenuItem>
-            <Link style={isActive('/signup', currentPath)} to='/signup'>
-              <IconButton aria-label='Signup' color='inherit'>
-                <PersonAddIcon />
-              </IconButton>
-              Signup
-            </Link>
-          </MenuItem>
-        </Fragment>
-      )}
-
       {isAuthenticated() && (
-        <MenuItem onClick={handleSignout}>
-          <IconButton aria-label='Signout' color='inherit'>
-            <ExitToAppIcon />
-          </IconButton>
-          Signout
-        </MenuItem>
+        <>
+          <Divider sx={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }} />
+          <MenuItem
+            onClick={handleSignout}
+            sx={{
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              },
+            }}
+          >
+            <ListItemIcon sx={{ color: 'white' }}>
+              <ExitToApp />
+            </ListItemIcon>
+            <ListItemText primary='Sign Out' />
+          </MenuItem>
+        </>
       )}
     </Menu>
   );
 
   return (
-    <GrowDiv>
-      <AppBar position='fixed'>
-        <Toolbar>
-          <Link to='/' style={{ color: '#ffffff', textDecoration: 'none' }}>
-            <IconButton
-              edge='start'
-              color='inherit'
-              aria-label='brand'
-              sx={{ mr: 2 }}
-            >
-              <StoreIcon />
-            </IconButton>
-          </Link>
-          <Link to='/' style={{ color: '#ffffff', textDecoration: 'none' }}>
-            <Typography variant='h6' noWrap component='div'>
-              BRAND
-            </Typography>
-          </Link>
+    <AppBar
+      position='fixed'
+      elevation={4}
+      sx={{ zIndex: theme.zIndex.drawer + 1 }}
+    >
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            edge='start'
+            color='inherit'
+            aria-label='brand'
+            component={Link}
+            to='/'
+            sx={{ mr: 1 }}
+          >
+            <Store />
+          </IconButton>
+          <Typography
+            variant='h6'
+            component={Link}
+            to='/'
+            sx={{
+              fontWeight: 'bold',
+              textDecoration: 'none',
+              color: 'white',
+            }}
+          >
+            BRAND
+          </Typography>
+        </Box>
 
-          <GrowDiv />
-          <DesktopSection>
-            <Link style={isActive('/', currentPath)} to='/'>
-              <IconButton aria-label='Home' color='inherit' size='large'>
-                <HomeIcon />
-                <Typography noWrap sx={{ ml: 1 }}>
-                  Home
-                </Typography>
-              </IconButton>
-            </Link>
+        {!isMobile ? (
+          renderDesktopNav()
+        ) : (
+          <IconButton
+            color='inherit'
+            aria-label='open menu'
+            onClick={handleMobileMenuOpen}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
+      </Toolbar>
 
-            <Link style={isActive('/shop', currentPath)} to='/shop'>
-              <IconButton aria-label='Shop' color='inherit' size='large'>
-                <StorefrontIcon />
-                <Typography noWrap sx={{ ml: 1 }}>
-                  Shop
-                </Typography>
-              </IconButton>
-            </Link>
-
-            <Link style={isActive('/cart', currentPath)} to='/cart'>
-              <IconButton aria-label='Cart' color='inherit' size='large'>
-                <Badge badgeContent={itemTotal()} color='secondary'>
-                  <ShoppingCartIcon />
-                </Badge>
-                <Typography noWrap sx={{ ml: 1 }}>
-                  Cart
-                </Typography>
-              </IconButton>
-            </Link>
-
-            {isAuthenticated() && isAuthenticated().user.role === 0 && (
-              <Link
-                style={isActive('/user/dashboard', currentPath)}
-                to='/user/dashboard'
-              >
-                <IconButton aria-label='Dashboard' color='inherit' size='large'>
-                  <DashboardIcon />
-                  <Typography noWrap sx={{ ml: 1 }}>
-                    Dashboard
-                  </Typography>
-                </IconButton>
-              </Link>
-            )}
-
-            {isAuthenticated() && isAuthenticated().user.role === 1 && (
-              <Link
-                style={isActive('/admin/dashboard', currentPath)}
-                to='/admin/dashboard'
-              >
-                <IconButton aria-label='Dashboard' color='inherit' size='large'>
-                  <DashboardIcon />
-                  <Typography noWrap sx={{ ml: 1 }}>
-                    Dashboard
-                  </Typography>
-                </IconButton>
-              </Link>
-            )}
-
-            {!isAuthenticated() && (
-              <Fragment>
-                <Link style={isActive('/signin', currentPath)} to='/signin'>
-                  <IconButton aria-label='Signin' color='inherit' size='large'>
-                    <AccountCircleIcon />
-                    <Typography noWrap sx={{ ml: 1 }}>
-                      Signin
-                    </Typography>
-                  </IconButton>
-                </Link>
-
-                <Link style={isActive('/signup', currentPath)} to='/signup'>
-                  <IconButton aria-label='Signup' color='inherit' size='large'>
-                    <PersonAddIcon />
-                    <Typography noWrap sx={{ ml: 1 }}>
-                      Signup
-                    </Typography>
-                  </IconButton>
-                </Link>
-              </Fragment>
-            )}
-
-            {isAuthenticated() && (
-              <IconButton
-                aria-label='Signout'
-                color='inherit'
-                size='large'
-                onClick={handleSignout}
-              >
-                <ExitToAppIcon />
-                <Typography noWrap sx={{ ml: 1 }}>
-                  Signout
-                </Typography>
-              </IconButton>
-            )}
-          </DesktopSection>
-          <MobileSection>
-            <IconButton
-              aria-label='show more'
-              aria-controls={mobileMenuId}
-              aria-haspopup='true'
-              onClick={handleMobileMenuOpen}
-              color='inherit'
-              size='large'
-            >
-              <MoreIcon />
-            </IconButton>
-          </MobileSection>
-        </Toolbar>
-      </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
-    </GrowDiv>
+      {isMobile && renderMobileMenu()}
+    </AppBar>
   );
 };
 

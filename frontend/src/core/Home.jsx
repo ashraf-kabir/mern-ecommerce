@@ -3,8 +3,8 @@ import Layout from './Layout';
 import { getProducts } from './apiCore.js';
 import Card from './Card.jsx';
 import Search from './Search';
-// import 'fontsource-roboto';
 import Copyright from './Copyright.jsx';
+import { Box, Container, Typography } from '@mui/material';
 
 const Home = () => {
   const [productsBySell, setProductsBySell] = useState([]);
@@ -43,30 +43,48 @@ const Home = () => {
       className='container-fluid'
     >
       <Search />
-      <div className='row'>
-        <div className='col-md-1'></div>
-        <div className='col-md-10'>
-          <h2 className='mb-2'>New Arrivals</h2>
-          <div className='row'>
+      <Container maxWidth='lg'>
+        <Box sx={{ my: 4 }}>
+          <Typography variant='h4' gutterBottom>
+            New Arrivals
+          </Typography>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+              },
+              gap: 3,
+              mb: 4,
+            }}
+          >
             {productsByArrival.map((product, i) => (
-              <div key={i} className='col-xl-4 col-lg-6 col-md-6 col-sm-12'>
-                <Card product={product} />
-              </div>
+              <Card key={i} product={product} />
             ))}
-          </div>
+          </Box>
 
-          <h2 className='mb-2 mt-4'>Best Sellers</h2>
-          <div className='row'>
+          <Typography variant='h4' gutterBottom>
+            Best Sellers
+          </Typography>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+              },
+              gap: 3,
+            }}
+          >
             {productsBySell.map((product, i) => (
-              <div key={i} className='col-xl-4 col-lg-6 col-md-6 col-sm-12'>
-                <Card product={product} />
-              </div>
+              <Card key={i} product={product} />
             ))}
-          </div>
-        </div>
-        <div className='col-md-1'></div>
-      </div>
-
+          </Box>
+        </Box>
+      </Container>
       <Copyright />
     </Layout>
   );

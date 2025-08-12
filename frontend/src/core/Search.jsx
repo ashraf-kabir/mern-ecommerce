@@ -1,41 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import {
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Grid,
+  Paper,
+  Container,
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
-
 import { getCategories, list } from './apiCore';
 import Card from './Card';
-
-// Styled components
-const SearchContainer = styled('div')(({ theme }) => ({
-  marginBottom: theme.spacing(3),
-}));
-
-const ResultsContainer = styled('div')({
-  width: '100%',
-});
-
-const StyledFormControl = styled(FormControl)(({ theme }) => ({
-  margin: theme.spacing(1),
-  minWidth: 120,
-}));
-
-const StyledTextField = styled(TextField)({
-  width: 800,
-  marginTop: 2,
-});
-
-const FormContainer = styled('form')(({ theme }) => ({
-  '& > *': {
-    margin: theme.spacing(2),
-  },
-}));
 
 const Search = () => {
   const [data, setData] = useState({
@@ -105,87 +84,95 @@ const Search = () => {
 
   const searchedProducts = (results = []) => {
     return (
-      <Box sx={{ width: '100%' }}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            my: 4,
-          }}
-        >
-          <h2>{searchMessage(searched, results)}</h2>
-        </Box>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: '1fr 1fr',
-              md: '1fr 1fr 1fr',
-            },
-            gap: 3,
-            px: 2,
-          }}
-        >
+      <Box sx={{ mt: 4 }}>
+        {searched && (
+          <Typography variant='h5' align='center' gutterBottom>
+            {searchMessage(searched, results)}
+          </Typography>
+        )}
+        <Grid container spacing={3}>
           {results.map((product, i) => (
-            <Box key={i}>
+            <Grid item key={i} xs={12} sm={6} md={4} lg={3}>
               <Card product={product} />
-            </Box>
+            </Grid>
           ))}
-        </Box>
+        </Grid>
       </Box>
     );
   };
 
-  const searchForm = () => (
-    <FormContainer onSubmit={searchSubmit}>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <StyledFormControl>
-          <InputLabel id='category-select-label'>Select</InputLabel>
+  return (
+    <Container maxWidth='lg' sx={{ py: 4 }}>
+      <Paper
+        component='form'
+        onSubmit={searchSubmit}
+        sx={{
+          p: 3,
+          mb: 4,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          gap: 2,
+          maxWidth: 800,
+          mx: 'auto',
+          boxShadow: 3,
+        }}
+      >
+        <FormControl sx={{ minWidth: 180 }}>
+          <InputLabel id='category-select-label'>Category</InputLabel>
           <Select
             labelId='category-select-label'
             id='category-select'
             value={category}
             onChange={handleChange('category')}
-            label='Select'
+            label='Category'
+            size='small'
           >
-            <MenuItem value='All'>
-              <em>All</em>
-            </MenuItem>
+            <MenuItem value='All'>All Categories</MenuItem>
             {categories.map((c, i) => (
               <MenuItem key={i} value={c._id}>
                 {c.name}
               </MenuItem>
             ))}
           </Select>
-        </StyledFormControl>
+        </FormControl>
 
-        <StyledTextField
-          onChange={handleChange('search')}
-          id='search-field'
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <SearchIcon sx={{ mr: 1 }} />
-              Search by name
-            </Box>
-          }
+        <TextField
+          fullWidth
           variant='outlined'
-          autoComplete='off'
-          sx={{ mx: 2 }}
+          placeholder='Search products...'
+          value={search}
+          onChange={handleChange('search')}
+          size='small'
+          InputProps={{
+            startAdornment: <SearchIcon color='action' sx={{ mr: 1 }} />,
+          }}
+          sx={{
+            flexGrow: 1,
+            maxWidth: 400,
+          }}
         />
 
-        <Button variant='contained' color='primary' type='submit'>
+        <Button
+          variant='contained'
+          type='submit'
+          size='large'
+          sx={{
+            px: 4,
+            height: 40,
+            backgroundColor: 'primary.main',
+            '&:hover': {
+              backgroundColor: 'primary.dark',
+            },
+          }}
+        >
           Search
         </Button>
-      </Box>
-    </FormContainer>
-  );
+      </Paper>
 
-  return (
-    <Box sx={{ width: '100%' }}>
-      <SearchContainer>{searchForm()}</SearchContainer>
-      <ResultsContainer>{searchedProducts(results)}</ResultsContainer>
-    </Box>
+      {searchedProducts(results)}
+    </Container>
   );
 };
 
