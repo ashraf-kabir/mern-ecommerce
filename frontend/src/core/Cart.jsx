@@ -4,8 +4,17 @@ import Layout from './Layout';
 import { getCart } from './cartHelpers.js';
 import Card from './Card.jsx';
 import Checkout from './Checkout';
-
 import Copyright from './Copyright.jsx';
+import {
+  Box,
+  Typography,
+  Divider,
+  Grid,
+  Container,
+  Button,
+  Paper,
+  Stack,
+} from '@mui/material';
 
 const Cart = () => {
   const [items, setItems] = useState([]);
@@ -17,48 +26,76 @@ const Cart = () => {
 
   const showItems = (items) => {
     return (
-      <div>
-        <h2>Your cart has {`${items.length}`} items</h2>
-        <hr />
+      <Stack spacing={3}>
+        <Typography variant='h5' textAlign='center' gutterBottom>
+          Your Cart ({items.length} {items.length === 1 ? 'Item' : 'Items'})
+        </Typography>
+        <Divider />
         {items.map((product, i) => (
-          <Card
-            key={i}
-            product={product}
-            showAddToCartButton={false}
-            cartUpdate={true}
-            showRemoveProductButton={true}
-            setRun={setRun}
-            run={run}
-          />
+          <Box key={i}>
+            <Card
+              product={product}
+              showAddToCartButton={false}
+              cartUpdate={true}
+              showRemoveProductButton={true}
+              setRun={setRun}
+              run={run}
+            />
+          </Box>
         ))}
-      </div>
+      </Stack>
     );
   };
 
   const noItemsMessage = () => (
-    <h2>
-      Your cart is empty. <br /> <Link to='/shop'>Continue shopping</Link>
-    </h2>
+    <Box textAlign='center' py={4}>
+      <Typography variant='h5' gutterBottom>
+        Your cart is empty
+      </Typography>
+      <Button
+        component={Link}
+        to='/shop'
+        variant='contained'
+        color='primary'
+        size='large'
+        sx={{ mt: 2 }}
+      >
+        Continue Shopping
+      </Button>
+    </Box>
   );
 
   return (
     <Layout
       title='Shopping Cart'
       description='Manage your cart items. Add remove checkout or continue shopping.'
-      className='container-fluid'
     >
-      <div className='row'>
-        <div className='col-md-2'></div>
-        <div className='col-md-4'>
-          {items.length > 0 ? showItems(items) : noItemsMessage()}
-        </div>
-        <div className='col-md-4'>
-          <h2 className='mb-4'>Your cart summary</h2>
-          <hr />
-          <Checkout products={items} setRun={setRun} run={run} />
-        </div>
-        <div className='col-md-2'></div>
-      </div>
+      <Container maxWidth='lg' sx={{ py: 4 }}>
+        {items.length > 0 ? (
+          <Grid container spacing={4} justifyContent='center'>
+            <Grid item xs={12} md={8} lg={7}>
+              <Paper elevation={2} sx={{ p: 3 }}>
+                {showItems(items)}
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4} lg={5}>
+              <Paper elevation={2} sx={{ p: 3, position: 'sticky', top: 16 }}>
+                <Typography variant='h5' textAlign='center' gutterBottom>
+                  Order Summary
+                </Typography>
+                <Divider sx={{ my: 2 }} />
+                <Checkout products={items} setRun={setRun} run={run} />
+              </Paper>
+            </Grid>
+          </Grid>
+        ) : (
+          <Box sx={{ maxWidth: 600, mx: 'auto' }}>
+            <Paper elevation={2} sx={{ p: 4 }}>
+              {noItemsMessage()}
+            </Paper>
+          </Box>
+        )}
+      </Container>
       <Copyright />
     </Layout>
   );

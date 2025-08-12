@@ -8,21 +8,17 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { styled } from '@mui/material/styles';
 import Container from '@mui/material/Container';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
+import { styled } from '@mui/material/styles';
 import Copyright from '../core/Copyright.jsx';
 import { signin, authenticate, isAuthenticated } from '../auth/index.js';
 
 // Create styled components using MUI v5 styled API
-const PaperContainer = styled('div')(({ theme }) => ({
-  marginTop: theme.spacing(8),
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-}));
-
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
   margin: theme.spacing(1),
   backgroundColor: theme.palette.secondary.main,
@@ -30,7 +26,7 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
 
 const FormContainer = styled('form')(({ theme }) => ({
   width: '100%',
-  marginTop: theme.spacing(1),
+  marginTop: theme.spacing(3),
 }));
 
 const SubmitButton = styled(Button)(({ theme }) => ({
@@ -44,19 +40,24 @@ export default function Signin() {
     error: '',
     loading: false,
     redirectToReferrer: false,
+    rememberMe: false,
   });
 
-  const { email, password, loading, error, redirectToReferrer } = values;
+  const { email, password, loading, error, redirectToReferrer, rememberMe } =
+    values;
   const { user } = isAuthenticated();
 
   const handleChange = (name) => (event) => {
-    setValues({ ...values, error: false, [name]: event.target.value });
+    const value =
+      name === 'rememberMe' ? event.target.checked : event.target.value;
+    setValues({ ...values, error: '', [name]: value });
   };
 
   const clickSubmit = (event) => {
     event.preventDefault();
-    setValues({ ...values, error: false, loading: true });
-    signin({ email, password }).then((data) => {
+    setValues({ ...values, error: '', loading: true });
+
+    signin({ email, password, rememberMe }).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error, loading: false });
       } else {
@@ -70,20 +71,18 @@ export default function Signin() {
     });
   };
 
-  const showError = () => (
-    <div
-      className='alert alert-danger'
-      style={{ display: error ? '' : 'none' }}
-    >
-      {error}
-    </div>
-  );
+  const showError = () =>
+    error && (
+      <Alert severity='error' sx={{ width: '100%', mb: 2 }}>
+        {error}
+      </Alert>
+    );
 
   const showLoading = () =>
     loading && (
-      <div className='alert alert-info'>
-        <h2>Loading...</h2>
-      </div>
+      <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
+        <CircularProgress />
+      </Box>
     );
 
   const redirectUser = () => {
@@ -99,85 +98,108 @@ export default function Signin() {
     }
   };
 
-  const signInForm = () => (
-    <Container component='main' maxWidth='xs'>
-      {showError()}
-      {showLoading()}
-      {redirectUser()}
-      <CssBaseline />
-      <PaperContainer>
-        <StyledAvatar>
-          <LockOutlinedIcon />
-        </StyledAvatar>
-        <Typography component='h1' variant='h5'>
-          Sign in
-        </Typography>
-        <FormContainer noValidate>
-          <TextField
-            variant='outlined'
-            margin='normal'
-            required
-            fullWidth
-            id='email'
-            label='Email Address'
-            name='email'
-            autoComplete='email'
-            onChange={handleChange('email')}
-            type='email'
-            value={email}
-            autoFocus
-          />
-          <TextField
-            variant='outlined'
-            margin='normal'
-            required
-            fullWidth
-            name='password'
-            label='Password'
-            type='password'
-            id='password'
-            onChange={handleChange('password')}
-            value={password}
-            autoComplete='current-password'
-          />
-          <FormControlLabel
-            control={<Checkbox value='remember' color='primary' />}
-            label='Remember me'
-          />
-          <SubmitButton
-            onClick={clickSubmit}
-            type='submit'
-            fullWidth
-            variant='contained'
-            color='primary'
-          >
-            Sign In
-          </SubmitButton>
-          <Grid container>
-            <Grid item xs>
-              <Link href='#' variant='body2'>
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link to='/signup' variant='body2'>
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
-        </FormContainer>
-      </PaperContainer>
-    </Container>
-  );
-
   return (
     <Layout
       title='Signin page'
       description='Signin to MERN E-commerce App'
       className='container col-md-8 offset-md-2'
     >
-      {signInForm()}
-      <Copyright />
+      <Container component='main' maxWidth='xs'>
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          {showError()}
+          {showLoading()}
+          {redirectUser()}
+
+          <StyledAvatar>
+            <LockOutlinedIcon />
+          </StyledAvatar>
+
+          <Typography component='h1' variant='h5'>
+            Sign in
+          </Typography>
+
+          <FormContainer onSubmit={clickSubmit} noValidate>
+            <TextField
+              margin='normal'
+              required
+              fullWidth
+              id='email'
+              label='Email Address'
+              name='email'
+              autoComplete='email'
+              onChange={handleChange('email')}
+              type='email'
+              value={email}
+              autoFocus
+            />
+
+            <TextField
+              margin='normal'
+              required
+              fullWidth
+              name='password'
+              label='Password'
+              type='password'
+              id='password'
+              onChange={handleChange('password')}
+              value={password}
+              autoComplete='current-password'
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  value='remember'
+                  color='primary'
+                  checked={rememberMe}
+                  onChange={handleChange('rememberMe')}
+                />
+              }
+              label='Remember me'
+            />
+
+            <SubmitButton
+              type='submit'
+              fullWidth
+              variant='contained'
+              disabled={loading}
+            >
+              Sign In
+            </SubmitButton>
+
+            <Grid container justifyContent='space-between'>
+              <Grid item>
+                <Typography variant='body2'>
+                  <Link to='/forgot-password' variant='body2'>
+                    Forgot password?
+                  </Link>
+                </Typography>
+              </Grid>
+
+              <Grid item>
+                <Typography variant='body2'>
+                  {"Don't have an account? "}
+                  <Link to='/signup' variant='body2'>
+                    {'Sign Up'}
+                  </Link>
+                </Typography>
+              </Grid>
+            </Grid>
+          </FormContainer>
+        </Box>
+
+        <Box mt={5}>
+          <Copyright />
+        </Box>
+      </Container>
     </Layout>
   );
 }

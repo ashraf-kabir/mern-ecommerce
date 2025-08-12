@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Layout from './Layout';
 import { read, listRelated } from './apiCore';
 import Card from './Card';
 
-const Product = (props) => {
-  const [product, setProduct] = useState({});
-  const [relatedProduct, setRelatedProduct] = useState([]);
-  const [error, setError] = useState(false);
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
+
+const Product = () => {
+  const [product, setProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [error, setError] = useState('');
+
+  const { productId } = useParams();
 
   const loadSingleProduct = (productId) => {
     read(productId).then((data) => {
@@ -14,12 +22,12 @@ const Product = (props) => {
         setError(data.error);
       } else {
         setProduct(data);
-        // fetch related products
-        listRelated(data._id).then((data) => {
-          if (data.error) {
-            setError(data.error);
+        setError('');
+        listRelated(data._id).then((relatedData) => {
+          if (relatedData.error) {
+            setError(relatedData.error);
           } else {
-            setRelatedProduct(data);
+            setRelatedProducts(relatedData);
           }
         });
       }
@@ -27,37 +35,61 @@ const Product = (props) => {
   };
 
   useEffect(() => {
-    const productId = props.match.params.productId;
     loadSingleProduct(productId);
-  }, [props]);
+  }, [productId]);
 
   return (
     <Layout
-      title={product && product.name}
-      description={
-        product && product.description && product.description.substring(0, 100)
-      }
+      title={product?.name || 'Product'}
+      description={product?.description?.substring(0, 100) || ''}
       className='container-fluid'
     >
-      <div className='row'>
-        <div className='col-md-2'></div>
-        <div className='col-md-4 col-sm-12'>
-          <h4>Product Details</h4>
-          {product && product.description && (
-            <Card product={product} showViewProductButton={false} />
-          )}
-        </div>
+      <Box sx={{ flexGrow: 1, p: 3 }}>
+        {error && (
+          <Alert severity='error' sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
 
-        <div className='col-md-4'>
-          <h4>Related products</h4>
-          {relatedProduct.map((p, i) => (
-            <div className='mb-3' key={i}>
-              <Card product={p} />
-            </div>
-          ))}
-        </div>
-        <div className='col-md-2'></div>
-      </div>
+        <Grid container spacing={4} justifyContent='center'>
+          <Grid item xs={12} md={5}>
+            <Typography variant='h4' gutterBottom>
+              Product Details
+            </Typography>
+            {product ? (
+              <Card product={product} showViewProductButton={false} />
+            ) : (
+              <Typography>Loading product...</Typography>
+            )}
+          </Grid>
+
+          <Grid item xs={12} md={7}>
+            <Typography variant='h5' gutterBottom>
+              Related Products
+            </Typography>
+
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  sm: 'repeat(2, 1fr)',
+                  md: 'repeat(3, 1fr)',
+                },
+                gap: 3,
+              }}
+            >
+              {relatedProducts.length > 0 ? (
+                relatedProducts.map((product, i) => (
+                  <Card key={i} product={product} />
+                ))
+              ) : (
+                <Typography>No related products found.</Typography>
+              )}
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
     </Layout>
   );
 };
