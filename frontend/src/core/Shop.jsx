@@ -3,8 +3,9 @@ import Layout from './Layout';
 import Button from '@mui/material/Button';
 import Card from './Card.jsx';
 import { getCategories, getFilteredProducts } from './apiCore.js';
-import Checkbox from './Checkbox';
-import RadioBox from './RadioBox.jsx';
+import CategoriesFilter from './CategoriesFilter';
+import PriceRangeFilter from './PriceRangeFilter';
+import { Box, Grid, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles'; // Updated import
 
 import Search from './Search';
@@ -121,38 +122,43 @@ const Shop = () => {
       className='container-fluid'
     >
       <Search />
-      <div className='row'>
-        <div className='col-md-3'>
-          <h4>Filter by categories</h4>
-          <ul>
-            <Checkbox
-              categories={categories}
-              handleFilters={(filters) => handleFilters(filters, 'category')}
-            />
-          </ul>
-
-          <h4>Filter by price range</h4>
-          <div>
-            <RadioBox
-              prices={prices}
-              handleFilters={(filters) => handleFilters(filters, 'price')}
-            />
-          </div>
-        </div>
-
-        <div className='col-md-9'>
-          <h2 className='mb-2'>Products</h2>
-          <div className='row'>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <CategoriesFilter
+            categories={categories}
+            handleFilters={(filters) => handleFilters(filters, 'category')}
+          />
+          <PriceRangeFilter
+            prices={prices}
+            handleFilters={(filters) => handleFilters(filters, 'price')}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 9 }}>
+          <Typography variant='h4' gutterBottom>
+            Products
+          </Typography>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+              },
+              gap: 3,
+              mb: 4,
+            }}
+          >
             {filteredResults.map((product, i) => (
-              <div key={i} className='col-xl-4 col-lg-6 col-md-12 col-sm-12'>
+              <Grid item key={i} xs={6} md={4}>
                 <Card product={product} />
-              </div>
+              </Grid>
             ))}
-          </div>
+          </Box>
           <hr />
           {loadMoreButton()}
-        </div>
-      </div>
+        </Grid>
+      </Grid>
       <Copyright />
     </Layout>
   );
