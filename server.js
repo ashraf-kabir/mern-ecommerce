@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const path = require('path');
-const expressValidator = require('express-validator');
 require('dotenv').config();
 // import routes
 const authRoutes = require('./routes/auth');
@@ -33,7 +32,6 @@ connectDB();
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(expressValidator());
 app.use(cors());
 
 // routes middleware
