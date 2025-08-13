@@ -1,23 +1,14 @@
-import React, { Component } from 'react';
-import { Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { isAuthenticated } from './index';
 
-const AdminRoute = ({ component: Component, ...rest }) => (
-  <Route
-    {...rest}
-    render={(props) =>
-      isAuthenticated() && isAuthenticated().user.role === 1 ? (
-        <Component {...props} />
-      ) : (
-        <Navigate
-          to={{
-            pathname: '/signin',
-            state: { from: props.location },
-          }}
-        />
-      )
-    }
-  />
-);
+const AdminRoute = ({ children }) => {
+  const auth = isAuthenticated();
+  return auth && auth.user.role === 1 ? (
+    children
+  ) : (
+    <Navigate to='/signin' replace />
+  );
+};
 
 export default AdminRoute;

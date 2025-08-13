@@ -1,78 +1,143 @@
 import React from 'react';
-import Layout from '../core/Layout';
-import { isAuthenticated } from '../auth';
+import { 
+  Box,
+  Typography,
+  Card,
+  CardHeader,
+  CardContent,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Chip,
+  Avatar,
+  Grid,
+  Paper,
+  Container
+} from '@mui/material';
 import { Link } from 'react-router-dom';
+import { isAuthenticated } from '../auth';
+import Layout from '../core/Layout';
+import {
+  Category as CategoryIcon,
+  AddCircle as AddCircleIcon,
+  ShoppingBasket as ShoppingBasketIcon,
+  Inventory as InventoryIcon,
+  People as PeopleIcon,
+  Person as PersonIcon,
+  Email as EmailIcon
+} from '@mui/icons-material';
 
 const AdminDashboard = () => {
   const {
     user: { _id, name, email, role },
   } = isAuthenticated();
 
-  const adminLinks = () => {
-    return (
-      <div className='card'>
-        <h4 className='card-header'>Admin Links</h4>
-        <ul className='list-group'>
-          <li className='list-group-item'>
-            <Link className='nav-link' to='/admin/categories'>
-              Category List
-            </Link>
-          </li>
-          <li className='list-group-item'>
-            <Link className='nav-link' to='/create/category'>
-              Add Category
-            </Link>
-          </li>
-          <li className='list-group-item'>
-            <Link className='nav-link' to='/create/product'>
-              Add Product
-            </Link>
-          </li>
-          <li className='list-group-item'>
-            <Link className='nav-link' to='/admin/orders'>
-              View Orders
-            </Link>
-          </li>
-          <li className='list-group-item'>
-            <Link className='nav-link' to='/admin/products'>
-              Manage Products
-            </Link>
-          </li>
-          <li className='list-group-item'>
-            <Link className='nav-link' to='/admin/users'>
-              Manage Users
-            </Link>
-          </li>
-        </ul>
-      </div>
-    );
-  };
-
-  const adminInfo = () => {
-    return (
-      <div className='card mb-5'>
-        <h3 className='card-header'>User information</h3>
-        <ul className='list-group'>
-          <li className='list-group-item'>{name}</li>
-          <li className='list-group-item'>{email}</li>
-          <li className='list-group-item'>
-            {role === 1 ? 'Admin' : 'Registered user'}
-          </li>
-        </ul>
-      </div>
-    );
-  };
+  const adminLinks = [
+    { text: 'Category List', to: '/admin/categories', icon: <CategoryIcon /> },
+    { text: 'Add Category', to: '/create/category', icon: <AddCircleIcon /> },
+    { text: 'Add Product', to: '/create/product', icon: <AddCircleIcon /> },
+    { text: 'View Orders', to: '/admin/orders', icon: <ShoppingBasketIcon /> },
+    { text: 'Manage Products', to: '/admin/products', icon: <InventoryIcon /> },
+    { text: 'Manage Users', to: '/admin/users', icon: <PeopleIcon /> },
+  ];
 
   return (
-    <Layout
-      title='Dashboard'
-      description={`${name}`}
-      className='container-fluid'
-    >
-      <div className='row'>
-        <div className='col-md-3'>{adminLinks()}</div>
-        <div className='col-md-9'>{adminInfo()}</div>
-      </div>
+    <Layout title="Admin Dashboard" description={`Welcome, ${name}`}>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Grid container spacing={3}>
+          {/* Admin Links Section */}
+          <Grid item xs={12} md={3}>
+            <Card elevation={3}>
+              <CardHeader 
+                title="Admin Actions" 
+                titleTypographyProps={{ variant: 'h6' }}
+                sx={{ bgcolor: 'primary.main', color: 'common.white' }}
+              />
+              <Divider />
+              <List>
+                {adminLinks.map((link, index) => (
+                  <React.Fragment key={link.text}>
+                    <ListItem 
+                      button 
+                      component={Link} 
+                      to={link.to}
+                      sx={{
+                        '&:hover': {
+                          bgcolor: 'action.hover',
+                        }
+                      }}
+                    >
+                      <ListItemIcon sx={{ color: 'primary.main' }}>
+                        {link.icon}
+                      </ListItemIcon>
+                      <ListItemText primary={link.text} />
+                    </ListItem>
+                    {index < adminLinks.length - 1 && <Divider component="li" />}
+                  </React.Fragment>
+                ))}
+              </List>
+            </Card>
+          </Grid>
+
+          {/* Admin Info Section */}
+          <Grid item xs={12} md={9}>
+            <Card elevation={3}>
+              <CardHeader 
+                title="Admin Profile" 
+                titleTypographyProps={{ variant: 'h6' }}
+                sx={{ bgcolor: 'background.paper' }}
+              />
+              <Divider />
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                  <Avatar
+                    sx={{
+                      width: 64,
+                      height: 64,
+                      mr: 3,
+                      bgcolor: 'primary.main',
+                      fontSize: '2rem'
+                    }}
+                  >
+                    {name.charAt(0).toUpperCase()}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="h5" component="div">
+                      {name}
+                    </Typography>
+                    <Chip
+                      label={role === 1 ? 'Administrator' : 'Registered User'}
+                      color="primary"
+                      size="small"
+                      sx={{ mt: 1 }}
+                    />
+                  </Box>
+                </Box>
+
+                <Paper elevation={0} sx={{ p: 2, bgcolor: 'background.default' }}>
+                  <List>
+                    <ListItem>
+                      <ListItemIcon sx={{ minWidth: 40 }}>
+                        <PersonIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText primary="User ID" secondary={_id} />
+                    </ListItem>
+                    <Divider component="li" />
+                    <ListItem>
+                      <ListItemIcon sx={{ minWidth: 40 }}>
+                        <EmailIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText primary="Email" secondary={email} />
+                    </ListItem>
+                  </List>
+                </Paper>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Container>
     </Layout>
   );
 };

@@ -1,23 +1,9 @@
-import React, { Component } from 'react';
-import { Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { isAuthenticated } from './index';
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route
-    {...rest}
-    render={(props) =>
-      isAuthenticated() ? (
-        <Component {...props} />
-      ) : (
-        <Navigate
-          to={{
-            pathname: '/signin',
-            state: { from: props.location },
-          }}
-        />
-      )
-    }
-  />
-);
+const PrivateRoute = ({ children }) => {
+  return isAuthenticated() ? children : <Navigate to='/signin' replace />;
+};
 
 export default PrivateRoute;

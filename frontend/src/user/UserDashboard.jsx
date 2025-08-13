@@ -1,12 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../core/Layout';
-import { isAuthenticated } from '../auth';
+import {
+  Box,
+  Container,
+  Typography,
+  Card,
+  CardHeader,
+  CardContent,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Chip,
+  Grid,
+  Avatar,
+  Paper,
+} from '@mui/material';
 import { Link } from 'react-router-dom';
+import { isAuthenticated } from '../auth';
 import { getPurchaseHistory } from './apiUser';
 import moment from 'moment';
+import Layout from '../core/Layout';
 
 const Dashboard = () => {
   const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const {
     user: { _id, name, email, role },
@@ -21,89 +38,146 @@ const Dashboard = () => {
       } else {
         setHistory(data);
       }
+      setLoading(false);
     });
   };
 
   useEffect(() => {
     init(_id, token);
-  }, []);
+  }, [_id, token]);
 
-  const userLinks = () => {
-    return (
-      <div className='card'>
-        <h4 className='card-header'>User links</h4>
-        <ul className='list-group'>
-          <li className='list-group-item'>
-            <Link className='nav-link' to='/cart'>
-              My cart
-            </Link>
-          </li>
-          <li className='list-group-item'>
-            <Link className='nav-link' to={`/profile/${_id}`}>
-              Update profile
-            </Link>
-          </li>
-        </ul>
-      </div>
-    );
-  };
+  const UserLinksCard = () => (
+    <Card elevation={4} sx={{ borderRadius: 3 }}>
+      <CardHeader
+        title='User Actions'
+        titleTypographyProps={{ variant: 'h6', fontWeight: 'bold' }}
+      />
+      <Divider />
+      <List>
+        <ListItem button component={Link} to='/cart'>
+          <ListItemText primary='My Cart' />
+        </ListItem>
+        <Divider component='li' />
+        <ListItem button component={Link} to={`/profile/${_id}`}>
+          <ListItemText primary='Update Profile' />
+        </ListItem>
+      </List>
+    </Card>
+  );
 
-  const userInfo = () => {
-    return (
-      <div className='card mb-5'>
-        <h3 className='card-header'>User information</h3>
-        <ul className='list-group'>
-          <li className='list-group-item'>{name}</li>
-          <li className='list-group-item'>{email}</li>
-          <li className='list-group-item'>
-            {role === 1 ? 'Admin' : 'Registered user'}
-          </li>
-        </ul>
-      </div>
-    );
-  };
+  const UserInfoCard = () => (
+    <Card elevation={4} sx={{ borderRadius: 3, mb: 3 }}>
+      <CardHeader
+        title='User Information'
+        titleTypographyProps={{ variant: 'h6', fontWeight: 'bold' }}
+      />
+      <Divider />
+      <CardContent>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Avatar
+            sx={{
+              bgcolor: 'primary.main',
+              mr: 2,
+              width: 48,
+              height: 48,
+              fontSize: 22,
+            }}
+          >
+            {name.charAt(0).toUpperCase()}
+          </Avatar>
+          <Typography variant='h6'>{name}</Typography>
+        </Box>
+        <List>
+          <ListItem>
+            <ListItemText primary='Email' secondary={email} />
+          </ListItem>
+          <Divider component='li' />
+          <ListItem>
+            <ListItemText
+              primary='Role'
+              secondary={
+                <Chip
+                  label={role === 1 ? 'Admin' : 'Registered User'}
+                  color={role === 1 ? 'primary' : 'default'}
+                  size='small'
+                />
+              }
+            />
+          </ListItem>
+        </List>
+      </CardContent>
+    </Card>
+  );
 
-  const purchaseHistory = (history) => {
-    return (
-      <div className='card mb-5'>
-        <h3 className='card-header'>Purchase history</h3>
-        <ul className='list-group'>
-          <li className='list-group-item'>
-            {history.map((h, i) => {
-              return (
-                <div>
-                  <hr />
-                  {h.products.map((p, i) => {
-                    return (
-                      <div key={i}>
-                        <h6>Product name: {p.name}</h6>
-                        <h6>Product price: ${p.price}</h6>
-                        <h6>Purchased date: {moment(p.createdAt).fromNow()}</h6>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </li>
-        </ul>
-      </div>
-    );
-  };
+  const PurchaseHistoryCard = () => (
+    <Card elevation={4} sx={{ borderRadius: 3 }}>
+      <CardHeader
+        title='Purchase History'
+        titleTypographyProps={{ variant: 'h6', fontWeight: 'bold' }}
+      />
+      <Divider />
+      <CardContent>
+        {loading ? (
+          <Typography>Loading history...</Typography>
+        ) : history.length === 0 ? (
+          <Typography>No purchase history found</Typography>
+        ) : (
+          <List>
+            {history.map((h, i) => (
+              <React.Fragment key={i}>
+                {h.products.map((p, j) => (
+                  <Paper
+                    key={j}
+                    elevation={2}
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      borderRadius: 2,
+                      transition: 'transform 0.2s',
+                      '&:hover': { transform: 'scale(1.01)' },
+                    }}
+                  >
+                    <Grid container spacing={2} alignItems='center'>
+                      <Grid item xs={12} sm={6}>
+                        <Typography variant='subtitle1' fontWeight='bold'>
+                          {p.name}
+                        </Typography>
+                        <Typography variant='body2' color='text.secondary'>
+                          ${p.price.toFixed(2)}
+                        </Typography>
+                      </Grid>
+                      <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        sx={{ textAlign: { xs: 'left', sm: 'right' } }}
+                      >
+                        <Typography variant='caption' color='text.secondary'>
+                          Purchased {moment(p.createdAt).fromNow()}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Paper>
+                ))}
+              </React.Fragment>
+            ))}
+          </List>
+        )}
+      </CardContent>
+    </Card>
+  );
 
   return (
-    <Layout
-      title='Dashboard'
-      description={`${name}`}
-      className='container-fluid'
-    >
-      <div className='row'>
-        <div className='col-md-3'>{userLinks()}</div>
-        <div className='col-md-9'>
-          {userInfo()}
-          {purchaseHistory(history)}
-        </div>
-      </div>
+    <Layout title='Dashboard' description={`Welcome back, ${name}`}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={3}>
+          <UserLinksCard />
+        </Grid>
+        <Grid item xs={12} md={9}>
+          <UserInfoCard />
+          <PurchaseHistoryCard />
+        </Grid>
+      </Grid>
     </Layout>
   );
 };
