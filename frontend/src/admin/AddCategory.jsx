@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Alert,
@@ -6,34 +6,15 @@ import {
   Card,
   CardHeader,
   CardContent,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Divider,
   Grid,
   TextField,
   Button,
 } from '@mui/material';
-import {
-  Category as CategoryIcon,
-  AddCircle as AddCircleIcon,
-  ShoppingBasket as ShoppingBasketIcon,
-  Inventory as InventoryIcon,
-  People as PeopleIcon,
-} from '@mui/icons-material';
 import Layout from '../core/Layout';
+import AdminSidebar from '../components/AdminSidebar';
 import { isAuthenticated } from '../auth';
 import { createCategory } from './apiAdmin';
-
-const adminLinks = [
-  { text: 'Category List', to: '/admin/categories', icon: <CategoryIcon /> },
-  { text: 'Add Category', to: '/create/category', icon: <AddCircleIcon /> },
-  { text: 'Add Product', to: '/create/product', icon: <AddCircleIcon /> },
-  { text: 'View Orders', to: '/admin/orders', icon: <ShoppingBasketIcon /> },
-  { text: 'Manage Products', to: '/admin/products', icon: <InventoryIcon /> },
-  { text: 'Manage Users', to: '/admin/users', icon: <PeopleIcon /> },
-];
 
 const AddCategory = () => {
   const [name, setName] = useState('');
@@ -133,37 +114,8 @@ const AddCategory = () => {
     >
       <Grid container spacing={2}>
         {/* LEFT SIDEBAR */}
-        <Grid size={{ xs: 12, md: 3 }}>
-          <Card elevation={3}>
-            <CardHeader
-              title='Admin Actions'
-              titleTypographyProps={{ variant: 'h6' }}
-              sx={{ bgcolor: 'primary.main', color: 'common.white' }}
-            />
-            <Divider />
-            <List dense>
-              {adminLinks.map((link, index) => (
-                <React.Fragment key={link.text}>
-                  <ListItem
-                    component={Link}
-                    to={link.to}
-                    sx={{
-                      '&:hover': {
-                        bgcolor: 'action.hover',
-                      },
-                    }}
-                  >
-                    <ListItemIcon sx={{ color: 'primary.main' }}>
-                      {link.icon}
-                    </ListItemIcon>
-                    <ListItemText primary={link.text} />
-                  </ListItem>
-                  {index < adminLinks.length - 1 && <Divider component='li' />}
-                </React.Fragment>
-              ))}
-            </List>
-          </Card>
-        </Grid>
+        <AdminSidebar />
+  
         {/* MAIN CONTENT */}
         <Grid size={{ xs: 12, md: 9 }}>
           <Card elevation={3}>

@@ -1,12 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../core/Layout';
-import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Grid,
+  Typography,
+  IconButton,
+  Tooltip,
+} from '@mui/material';
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from '@mui/icons-material';
+import Layout from '../core/Layout';
+import AdminSidebar from '../components/AdminSidebar';
+import { isAuthenticated } from '../auth';
 import { getProducts, deleteProduct } from './apiAdmin';
 
 const ManageProducts = () => {
   const [products, setProducts] = useState([]);
-
   const { user, token } = isAuthenticated();
 
   const loadProducts = () => {
@@ -36,36 +53,66 @@ const ManageProducts = () => {
   return (
     <Layout
       title='Manage Products'
-      description='Perform CRUD on products'
-      className='container-fluid'
+      description={`Hey ${user.name}, you can manage all the products here`}
     >
-      <div className='row'>
-        <div className='col-12'>
-          <h2 className='text-center'>Total {products.length} products</h2>
-          <hr />
-          <ul className='list-group'>
-            {products.map((p, i) => (
-              <li
-                key={i}
-                className='list-group-item d-flex justify-content-between align-items-center'
-              >
-                <strong>{p.name}</strong>
-                <Link to={`/admin/product/update/${p._id}`}>
-                  <span className='badge badge-warning badge-pill'>Update</span>
-                </Link>
-                <Link>
-                  <span
-                    onClick={() => destroy(p._id)}
-                    className='badge badge-danger badge-pill'
-                  >
-                    Delete
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      <Grid container spacing={2}>
+        {/* LEFT SIDEBAR */}
+        <AdminSidebar />
+
+        {/* MAIN CONTENT */}
+        <Grid size={{ xs: 12, md: 9 }}>
+          <Card elevation={3}>
+            <CardHeader
+              title={`Total Products: ${products.length}`}
+              titleTypographyProps={{ variant: 'h6' }}
+            />
+            <Divider />
+            <CardContent>
+              {products.length === 0 ? (
+                <Typography variant='body1' color='text.secondary'>
+                  No products found.
+                </Typography>
+              ) : (
+                <List>
+                  {products.map((p, i) => (
+                    <React.Fragment key={p._id}>
+                      <ListItem
+                        secondaryAction={
+                          <>
+                            <Tooltip title='Edit'>
+                              <IconButton
+                                component={Link}
+                                to={`/admin/product/update/${p._id}`}
+                                color='primary'
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title='Delete'>
+                              <IconButton
+                                color='error'
+                                onClick={() => destroy(p._id)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </>
+                        }
+                      >
+                        <ListItemText
+                          primary={p.name}
+                          primaryTypographyProps={{ fontWeight: 'bold' }}
+                        />
+                      </ListItem>
+                      {i < products.length - 1 && <Divider />}
+                    </React.Fragment>
+                  ))}
+                </List>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
     </Layout>
   );
 };
