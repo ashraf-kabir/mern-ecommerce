@@ -1,7 +1,46 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  Alert,
+  Box,
+  Card,
+  CardHeader,
+  CardContent,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Grid,
+  TextField,
+  MenuItem,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  FormHelperText,
+  CircularProgress,
+  Typography,
+} from '@mui/material';
+import {
+  Category as CategoryIcon,
+  AddCircle as AddCircleIcon,
+  ShoppingBasket as ShoppingBasketIcon,
+  Inventory as InventoryIcon,
+  People as PeopleIcon,
+} from '@mui/icons-material';
 import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
 import { createProduct, getCategories } from './apiAdmin';
+
+const adminLinks = [
+  { text: 'Category List', to: '/admin/categories', icon: <CategoryIcon /> },
+  { text: 'Add Category', to: '/create/category', icon: <AddCircleIcon /> },
+  { text: 'Add Product', to: '/create/product', icon: <AddCircleIcon /> },
+  { text: 'View Orders', to: '/admin/orders', icon: <ShoppingBasketIcon /> },
+  { text: 'Manage Products', to: '/admin/products', icon: <InventoryIcon /> },
+  { text: 'Manage Users', to: '/admin/users', icon: <PeopleIcon /> },
+];
 
 const AddProduct = () => {
   const [values, setValues] = useState({
@@ -12,12 +51,21 @@ const AddProduct = () => {
     category: '',
     shipping: '',
     quantity: '',
-    photo: '',
+    photo: null,
     loading: false,
     error: '',
     createdProduct: '',
-    redirectToProfile: false,
-    formData: '',
+    formData: new FormData(),
+  });
+
+  const [touched, setTouched] = useState({
+    name: false,
+    description: false,
+    price: false,
+    category: false,
+    shipping: false,
+    quantity: false,
+    photo: false,
   });
 
   const { user, token } = isAuthenticated();
@@ -30,13 +78,26 @@ const AddProduct = () => {
     category,
     shipping,
     quantity,
-    photo,
     loading,
     error,
     createdProduct,
-    redirectToProfile,
     formData,
   } = values;
+
+  // Form validation
+  const validate = () => {
+    return (
+      name.trim() !== '' &&
+      description.trim() !== '' &&
+      price > 0 &&
+      category !== '' &&
+      shipping !== '' &&
+      quantity > 0 &&
+      formData.get('photo') !== null
+    );
+  };
+
+  const isFormValid = validate();
 
   // load categories and set form data
   const init = () => {
@@ -47,7 +108,6 @@ const AddProduct = () => {
         setValues({
           ...values,
           categories: data,
-          formData: new FormData(),
         });
       }
     });
@@ -59,8 +119,31 @@ const AddProduct = () => {
 
   const handleChange = (name) => (event) => {
     const value = name === 'photo' ? event.target.files[0] : event.target.value;
-    formData.set(name, value);
-    setValues({ ...values, [name]: value });
+
+    // Update formData
+    const newFormData = new FormData();
+    for (let [key, val] of formData.entries()) {
+      if (key !== name) {
+        newFormData.set(key, val);
+      }
+    }
+    if (value !== undefined && value !== null) {
+      newFormData.set(name, value);
+    }
+
+    setValues({
+      ...values,
+      [name]: value,
+      formData: newFormData,
+      error: '',
+    });
+
+    // Mark field as touched
+    setTouched({ ...touched, [name]: true });
+  };
+
+  const handleBlur = (field) => () => {
+    setTouched({ ...touched, [field]: true });
   };
 
   const clickSubmit = (event) => {
@@ -69,139 +152,285 @@ const AddProduct = () => {
 
     createProduct(user._id, token, formData).then((data) => {
       if (data.error) {
-        setValues({ ...values, error: data.error });
+        setValues({ ...values, error: data.error, loading: false });
       } else {
         setValues({
           ...values,
           name: '',
           description: '',
-          photo: '',
+          photo: null,
           price: '',
           quantity: '',
+          category: '',
+          shipping: '',
           loading: false,
           createdProduct: data.name,
+          formData: new FormData(),
+        });
+        setTouched({
+          name: false,
+          description: false,
+          price: false,
+          category: false,
+          shipping: false,
+          quantity: false,
+          photo: false,
         });
       }
     });
   };
 
   const newPostForm = () => (
-    <form className='mb-3' onSubmit={clickSubmit}>
-      <h4>Post Photo</h4>
-      <div className='form-group'>
-        <label className='btn btn-secondary'>
+    <Box component='form' onSubmit={clickSubmit} sx={{ fullWidth: true }}>
+      <Box sx={{ mb: 3 }}>
+        <Button
+          variant='outlined'
+          component='label'
+          fullWidth
+          color={touched.photo && !formData.get('photo') ? 'error' : 'primary'}
+        >
+          Upload Product Photo
           <input
-            onChange={handleChange('photo')}
             type='file'
             name='photo'
             accept='image/*'
+            onChange={handleChange('photo')}
+            onBlur={handleBlur('photo')}
+            hidden
           />
-        </label>
-      </div>
+        </Button>
+        {touched.photo && !formData.get('photo') && (
+          <FormHelperText error>Product photo is required</FormHelperText>
+        )}
+      </Box>
 
-      <div className='form-group'>
-        <label className='text-muted'>Name</label>
-        <input
-          onChange={handleChange('name')}
-          type='text'
-          className='form-control'
-          value={name}
-        />
-      </div>
+      <TextField
+        label='Product Name'
+        variant='outlined'
+        fullWidth
+        margin='normal'
+        value={name}
+        onChange={handleChange('name')}
+        onBlur={handleBlur('name')}
+        error={touched.name && name.trim() === ''}
+        helperText={
+          touched.name && name.trim() === '' ? 'Product name is required' : ''
+        }
+        required
+      />
 
-      <div className='form-group'>
-        <label className='text-muted'>Description</label>
-        <textarea
-          onChange={handleChange('description')}
-          className='form-control'
-          value={description}
-        />
-      </div>
+      <TextField
+        label='Description'
+        variant='outlined'
+        fullWidth
+        margin='normal'
+        multiline
+        rows={4}
+        value={description}
+        onChange={handleChange('description')}
+        onBlur={handleBlur('description')}
+        error={touched.description && description.trim() === ''}
+        helperText={
+          touched.description && description.trim() === ''
+            ? 'Description is required'
+            : ''
+        }
+        required
+      />
 
-      <div className='form-group'>
-        <label className='text-muted'>Price</label>
-        <input
-          onChange={handleChange('price')}
-          type='number'
-          className='form-control'
-          value={price}
-        />
-      </div>
+      <TextField
+        label='Price'
+        variant='outlined'
+        fullWidth
+        margin='normal'
+        type='number'
+        value={price}
+        onChange={handleChange('price')}
+        onBlur={handleBlur('price')}
+        error={touched.price && (price === '' || price <= 0)}
+        helperText={
+          touched.price && (price === '' || price <= 0)
+            ? 'Price must be greater than 0'
+            : ''
+        }
+        required
+        inputProps={{ min: 0, step: 0.01 }}
+      />
 
-      <div className='form-group'>
-        <label className='text-muted'>Category</label>
-        <select onChange={handleChange('category')} className='form-control'>
-          <option>Please select</option>
-          {categories &&
-            categories.map((c, i) => (
-              <option key={i} value={c._id}>
-                {c.name}
-              </option>
-            ))}
-        </select>
-      </div>
+      <FormControl
+        fullWidth
+        margin='normal'
+        error={touched.category && category === ''}
+      >
+        <InputLabel id='category-label'>Category *</InputLabel>
+        <Select
+          labelId='category-label'
+          value={category}
+          label='Category *'
+          onChange={handleChange('category')}
+          onBlur={handleBlur('category')}
+        >
+          <MenuItem value=''>
+            <em>Select a category</em>
+          </MenuItem>
+          {categories.map((c) => (
+            <MenuItem key={c._id} value={c._id}>
+              {c.name}
+            </MenuItem>
+          ))}
+        </Select>
+        {touched.category && category === '' && (
+          <FormHelperText>Category is required</FormHelperText>
+        )}
+      </FormControl>
 
-      <div className='form-group'>
-        <label className='text-muted'>Shipping</label>
-        <select onChange={handleChange('shipping')} className='form-control'>
-          <option>Please select</option>
-          <option value='0'>No</option>
-          <option value='1'>Yes</option>
-        </select>
-      </div>
+      <FormControl
+        fullWidth
+        margin='normal'
+        error={touched.shipping && shipping === ''}
+      >
+        <InputLabel id='shipping-label'>Shipping *</InputLabel>
+        <Select
+          labelId='shipping-label'
+          value={shipping}
+          label='Shipping *'
+          onChange={handleChange('shipping')}
+          onBlur={handleBlur('shipping')}
+        >
+          <MenuItem value=''>
+            <em>Select shipping option</em>
+          </MenuItem>
+          <MenuItem value='0'>No</MenuItem>
+          <MenuItem value='1'>Yes</MenuItem>
+        </Select>
+        {touched.shipping && shipping === '' && (
+          <FormHelperText>Shipping option is required</FormHelperText>
+        )}
+      </FormControl>
 
-      <div className='form-group'>
-        <label className='text-muted'>Quantity</label>
-        <input
-          onChange={handleChange('quantity')}
-          type='number'
-          className='form-control'
-          value={quantity}
-        />
-      </div>
+      <TextField
+        label='Quantity'
+        variant='outlined'
+        fullWidth
+        margin='normal'
+        type='number'
+        value={quantity}
+        onChange={handleChange('quantity')}
+        onBlur={handleBlur('quantity')}
+        error={touched.quantity && (quantity === '' || quantity <= 0)}
+        helperText={
+          touched.quantity && (quantity === '' || quantity <= 0)
+            ? 'Quantity must be greater than 0'
+            : ''
+        }
+        required
+        inputProps={{ min: 0 }}
+      />
 
-      <button className='btn btn-outline-primary'>Create Product</button>
-    </form>
+      <Button
+        type='submit'
+        variant='contained'
+        color='primary'
+        fullWidth
+        size='large'
+        sx={{ mt: 3 }}
+        disabled={!isFormValid || loading}
+      >
+        {loading ? <CircularProgress size={24} /> : 'Create Product'}
+      </Button>
+    </Box>
   );
-
-  const showError = () => (
-    <div
-      className='alert alert-danger'
-      style={{ display: error ? '' : 'none' }}
-    >
-      {error}
-    </div>
-  );
-
-  const showSuccess = () => (
-    <div
-      className='alert alert-info'
-      style={{ display: createdProduct ? '' : 'none' }}
-    >
-      <h2>{`${createdProduct}`} is created!</h2>
-    </div>
-  );
-
-  const showLoading = () =>
-    loading && (
-      <div className='alert alert-success'>
-        <h2>Loading...</h2>
-      </div>
-    );
 
   return (
     <Layout
       title='Add a new product'
       description={`Hey ${user.name}, ready to add a new product?`}
     >
-      <div className='row'>
-        <div className='col-md-8 offset-md-2'>
-          {showLoading()}
-          {showSuccess()}
-          {showError()}
-          {newPostForm()}
-        </div>
-      </div>
+      <Grid container spacing={2}>
+        {/* LEFT SIDEBAR */}
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Card elevation={3}>
+            <CardHeader
+              title='Admin Actions'
+              titleTypographyProps={{ variant: 'h6' }}
+              sx={{ bgcolor: 'primary.main', color: 'common.white' }}
+            />
+            <Divider />
+            <List dense>
+              {adminLinks.map((link, index) => (
+                <React.Fragment key={link.text}>
+                  <ListItem
+                    component={Link}
+                    to={link.to}
+                    sx={{
+                      '&:hover': {
+                        bgcolor: 'action.hover',
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ color: 'primary.main' }}>
+                      {link.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={link.text} />
+                  </ListItem>
+                  {index < adminLinks.length - 1 && <Divider component='li' />}
+                </React.Fragment>
+              ))}
+            </List>
+          </Card>
+        </Grid>
+        {/* MAIN CONTENT */}
+        <Grid size={{ xs: 12, md: 9 }}>
+          <Card elevation={3}>
+            <CardHeader
+              title='Add New Product'
+              sx={{
+                bgcolor: 'background.paper',
+              }}
+            />
+            <Divider />
+            <CardContent>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2,
+                  alignItems: 'flex-start',
+                  width: '100%',
+                }}
+              >
+                {error && (
+                  <Alert severity='error' sx={{ width: '100%' }}>
+                    {error}
+                  </Alert>
+                )}
+
+                {createdProduct && (
+                  <Alert severity='success' sx={{ width: '100%' }}>
+                    <Typography variant='h6'>
+                      {`${createdProduct}`} has been created successfully!
+                    </Typography>
+                  </Alert>
+                )}
+
+                {loading && (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      width: '100%',
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                )}
+
+                {newPostForm()}
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
     </Layout>
   );
 };
