@@ -43,19 +43,19 @@ const Search = () => {
 
   const { categories, category, search, results, searched } = data;
 
-  const loadCategories = () => {
-    getCategories().then((data) => {
-      if (data.error) {
-        console.log(data.error);
-      } else {
-        setData({ ...data, categories: data });
-      }
-    });
-  };
+  // const loadCategories = () => {
+  //   getCategories().then((data) => {
+  //     if (data.error) {
+  //       console.log(data.error);
+  //     } else {
+  //       setData({ ...data, categories: data });
+  //     }
+  //   });
+  // };
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
+  // useEffect(() => {
+  //   loadCategories();
+  // }, []);
 
   const searchData = () => {
     // console.log(search, category);

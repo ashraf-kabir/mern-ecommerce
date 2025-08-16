@@ -11,30 +11,30 @@ const Home = () => {
   const [productsByArrival, setProductsByArrival] = useState([]);
   const [error, setError] = useState([]);
 
-  const loadProductsBySell = () => {
-    getProducts('sold').then((data) => {
-      if (data.error) {
-        setError(data.error);
-      } else {
-        setProductsBySell(data);
-      }
-    });
-  };
+  // const loadProductsBySell = () => {
+  //   getProducts('sold').then((data) => {
+  //     if (data.error) {
+  //       setError(data.error);
+  //     } else {
+  //       setProductsBySell(data);
+  //     }
+  //   });
+  // };
 
-  const loadProductsByArrival = () => {
-    getProducts('createdAt').then((data) => {
-      if (data.error) {
-        setError(data.error);
-      } else {
-        setProductsByArrival(data);
-      }
-    });
-  };
+  // const loadProductsByArrival = () => {
+  //   getProducts('createdAt').then((data) => {
+  //     if (data.error) {
+  //       setError(data.error);
+  //     } else {
+  //       setProductsByArrival(data);
+  //     }
+  //   });
+  // };
 
-  useEffect(() => {
-    loadProductsByArrival();
-    loadProductsBySell();
-  }, []);
+  // useEffect(() => {
+  //   loadProductsByArrival();
+  //   // loadProductsBySell();
+  // }, []);
 
   return (
     <Layout
