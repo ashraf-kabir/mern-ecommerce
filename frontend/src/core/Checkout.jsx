@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import Button from '@mui/material/Button';
+import {
+  Box,
+  Typography,
+  Button,
+  Alert,
+  CircularProgress,
+  TextField,
+  Stack,
+} from '@mui/material';
 import {
   getBraintreeClientToken,
   processPayment,
@@ -24,13 +32,11 @@ const Checkout = ({ products, setRun = (f) => f, run = undefined }) => {
   const token = isAuthenticated() && isAuthenticated().token;
 
   const getToken = (userId, token) => {
-    getBraintreeClientToken(userId, token).then((data) => {
-      if (data.error) {
-        console.log(data.error);
-        setData({ ...data, error: data.error });
+    getBraintreeClientToken(userId, token).then((res) => {
+      if (res.error) {
+        setData((prev) => ({ ...prev, error: res.error }));
       } else {
-        console.log(data);
-        setData({ clientToken: data.clientToken });
+        setData((prev) => ({ ...prev, clientToken: res.clientToken }));
       }
     });
   };
@@ -43,43 +49,18 @@ const Checkout = ({ products, setRun = (f) => f, run = undefined }) => {
     setData({ ...data, address: event.target.value });
   };
 
-  const getTotal = () => {
-    return products.reduce((currentValue, nextValue) => {
+  const getTotal = () =>
+    products.reduce((currentValue, nextValue) => {
       return currentValue + nextValue.count * nextValue.price;
     }, 0);
-  };
-
-  const showCheckout = () => {
-    return isAuthenticated() ? (
-      <div>{showDropIn()}</div>
-    ) : (
-      <Link to='/signin'>
-        <Button variant='contained' color='primary'>
-          Sign in to checkout
-        </Button>
-      </Link>
-    );
-  };
-
-  let deliveryAddress = data.address;
 
   const buy = () => {
-    setData({ loading: true });
-    // send the nonce to your server
-    // nonce = data.instance.requestPaymentMethod()
+    setData({ ...data, loading: true });
     let nonce;
-    let getNonce = data.instance
+    data.instance
       .requestPaymentMethod()
-      .then((data) => {
-        // console.log(data);
-        nonce = data.nonce;
-        // once you have nonce (card type, card number) send nonce as 'paymentMethodNonce'
-        // and also total to be charged
-        // console.log(
-        //     "send nonce and total to process: ",
-        //     nonce,
-        //     getTotal(products)
-        // );
+      .then((res) => {
+        nonce = res.nonce;
         const paymentData = {
           paymentMethodNonce: nonce,
           amount: getTotal(products),
@@ -87,104 +68,108 @@ const Checkout = ({ products, setRun = (f) => f, run = undefined }) => {
 
         processPayment(userId, token, paymentData)
           .then((response) => {
-            console.log(response);
-            // empty cart
-            // create order
-
             const createOrderData = {
               products: products,
               transaction_id: response.transaction.id,
               amount: response.transaction.amount,
-              address: deliveryAddress,
+              address: data.address,
             };
 
             createOrder(userId, token, createOrderData)
-              .then((response) => {
+              .then(() => {
                 emptyCart(() => {
-                  setRun(!run); // run useEffect in parent Cart
-                  console.log('payment success and empty cart');
+                  setRun(!run);
                   setData({
                     loading: false,
                     success: true,
+                    clientToken: data.clientToken,
+                    instance: {},
+                    address: '',
                   });
                 });
               })
-              .catch((error) => {
-                console.log(error);
-                setData({ loading: false });
-              });
+              .catch(() => setData({ ...data, loading: false }));
           })
-          .catch((error) => {
-            console.log(error);
-            setData({ loading: false });
-          });
+          .catch(() => setData({ ...data, loading: false }));
       })
       .catch((error) => {
-        // console.log("dropin error: ", error);
         setData({ ...data, error: error.message });
       });
   };
 
-  const showDropIn = () => (
-    <div onBlur={() => setData({ ...data, error: '' })}>
-      {data.clientToken !== null && products.length > 0 ? (
-        <div>
-          <div className='gorm-group mb-3'>
-            <label className='text-muted'>Delivery address:</label>
-            <textarea
-              onChange={handleAddress}
-              className='form-control'
-              value={data.address}
-              placeholder='Type your delivery address here...'
-            />
-          </div>
+  const showDropIn = () =>
+    data.clientToken !== null &&
+    products.length > 0 && (
+      <Box sx={{ mt: 2 }}>
+        <TextField
+          label='Delivery Address'
+          placeholder='Type your delivery address...'
+          fullWidth
+          multiline
+          minRows={3}
+          value={data.address}
+          onChange={handleAddress}
+          sx={{ mb: 2 }}
+        />
 
-          <DropIn
-            options={{
-              authorization: data.clientToken,
-              paypal: {
-                flow: 'vault',
-              },
-            }}
-            onInstance={(instance) => (data.instance = instance)}
-          />
-          <button onClick={buy} className='btn btn-success btn-block'>
-            Pay
-          </button>
-        </div>
-      ) : null}
-    </div>
-  );
+        <DropIn
+          options={{
+            authorization: data.clientToken,
+            paypal: { flow: 'vault' },
+          }}
+          onInstance={(instance) => (data.instance = instance)}
+        />
 
-  const showError = (error) => (
-    <div
-      className='alert alert-danger'
-      style={{ display: error ? '' : 'none' }}
-    >
-      {error}
-    </div>
-  );
-
-  const showSuccess = (success) => (
-    <div
-      className='alert alert-info'
-      style={{ display: success ? '' : 'none' }}
-    >
-      Thanks! Your payment was successful!
-    </div>
-  );
-
-  const showLoading = (loading) =>
-    loading && <h2 className='text-danger'>Loading...</h2>;
+        <Button
+          onClick={buy}
+          variant='contained'
+          color='success'
+          fullWidth
+          sx={{ mt: 2 }}
+        >
+          Pay ${getTotal()}
+        </Button>
+      </Box>
+    );
 
   return (
-    <div>
-      <h2>Total: ${getTotal()}</h2>
-      {showLoading(data.loading)}
-      {showSuccess(data.success)}
-      {showError(data.error)}
-      {showCheckout()}
-    </div>
+    <Box>
+      <Typography variant='h6' gutterBottom>
+        Total: ${getTotal()}
+      </Typography>
+
+      {data.loading && (
+        <Stack alignItems='center' sx={{ mb: 2 }}>
+          <CircularProgress color='error' />
+        </Stack>
+      )}
+
+      {data.success && (
+        <Alert severity='success' sx={{ mb: 2 }}>
+          🎉 Thanks! Your payment was successful.
+        </Alert>
+      )}
+
+      {data.error && (
+        <Alert severity='error' sx={{ mb: 2 }}>
+          {data.error}
+        </Alert>
+      )}
+
+      {isAuthenticated() ? (
+        showDropIn()
+      ) : (
+        <Button
+          component={Link}
+          to='/signin'
+          variant='contained'
+          color='primary'
+          fullWidth
+        >
+          Sign in to checkout
+        </Button>
+      )}
+    </Box>
   );
 };
 

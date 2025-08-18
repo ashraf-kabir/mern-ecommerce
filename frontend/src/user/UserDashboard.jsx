@@ -20,6 +20,7 @@ import { isAuthenticated } from '../auth';
 import { getPurchaseHistory } from './apiUser';
 import moment from 'moment';
 import Layout from '../core/Layout';
+import UserSidebar from '../components/UserSidebar';
 
 const Dashboard = () => {
   const [history, setHistory] = useState([]);
@@ -169,11 +170,12 @@ const Dashboard = () => {
 
   return (
     <Layout title='Dashboard' description={`Welcome back, ${name}`}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={3}>
-          <UserLinksCard />
-        </Grid>
-        <Grid item xs={12} md={9}>
+      <Grid container spacing={2}>
+        {/* LEFT SIDEBAR */}
+        <UserSidebar userId={_id} />
+
+        {/* MAIN CONTENT */}
+        <Grid size={{ xs: 12, md: 9 }}>
           <UserInfoCard />
           <PurchaseHistoryCard />
         </Grid>

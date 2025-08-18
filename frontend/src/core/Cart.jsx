@@ -24,28 +24,26 @@ const Cart = () => {
     setItems(getCart());
   }, [run]);
 
-  const showItems = (items) => {
-    return (
-      <Stack spacing={3}>
-        <Typography variant='h5' textAlign='center' gutterBottom>
-          Your Cart ({items.length} {items.length === 1 ? 'Item' : 'Items'})
-        </Typography>
-        <Divider />
-        {items.map((product, i) => (
-          <Box key={i}>
-            <Card
-              product={product}
-              showAddToCartButton={false}
-              cartUpdate={true}
-              showRemoveProductButton={true}
-              setRun={setRun}
-              run={run}
-            />
-          </Box>
-        ))}
-      </Stack>
-    );
-  };
+  const showItems = (items) => (
+    <Stack spacing={3}>
+      <Typography variant='h5' textAlign='center' gutterBottom>
+        Your Cart ({items.length} {items.length === 1 ? 'Item' : 'Items'})
+      </Typography>
+      <Divider />
+      {items.map((product, i) => (
+        <Box key={i}>
+          <Card
+            product={product}
+            showAddToCartButton={false}
+            cartUpdate={true}
+            showRemoveProductButton={true}
+            setRun={setRun}
+            run={run}
+          />
+        </Box>
+      ))}
+    </Stack>
+  );
 
   const noItemsMessage = () => (
     <Box textAlign='center' py={4}>
@@ -70,32 +68,36 @@ const Cart = () => {
       title='Shopping Cart'
       description='Manage your cart items. Add remove checkout or continue shopping.'
     >
-      <Container maxWidth='lg' sx={{ py: 4 }}>
-        {items.length > 0 ? (
-          <Grid container spacing={4} justifyContent='center'>
-            <Grid item xs={12} md={8} lg={7}>
-              <Paper elevation={2} sx={{ p: 3 }}>
-                {showItems(items)}
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4} lg={5}>
-              <Paper elevation={2} sx={{ p: 3, position: 'sticky', top: 16 }}>
-                <Typography variant='h5' textAlign='center' gutterBottom>
-                  Order Summary
-                </Typography>
-                <Divider sx={{ my: 2 }} />
-                <Checkout products={items} setRun={setRun} run={run} />
-              </Paper>
-            </Grid>
-          </Grid>
-        ) : (
-          <Box sx={{ maxWidth: 600, mx: 'auto' }}>
-            <Paper elevation={2} sx={{ p: 4 }}>
-              {noItemsMessage()}
+      {items.length > 0 ? (
+        <Grid container spacing={2}>
+          {/* Cart Items */}
+          <Grid size={{ xs: 12, md: 3 }}>
+            <Paper elevation={2} sx={{ p: 3, height: '100%' }}>
+              {showItems(items)}
             </Paper>
-          </Box>
-        )}
-      </Container>
+          </Grid>
+
+          {/* Order Summary */}
+          <Grid size={{ xs: 12, md: 9 }}>
+            <Paper
+              elevation={2}
+              sx={{ p: 3, position: { md: 'sticky' }, top: { md: 16 } }}
+            >
+              <Typography variant='h5' textAlign='center' gutterBottom>
+                Order Summary
+              </Typography>
+              <Divider sx={{ my: 2 }} />
+              <Checkout products={items} setRun={setRun} run={run} />
+            </Paper>
+          </Grid>
+        </Grid>
+      ) : (
+        <Box sx={{ maxWidth: 600, mx: 'auto' }}>
+          <Paper elevation={2} sx={{ p: 4 }}>
+            {noItemsMessage()}
+          </Paper>
+        </Box>
+      )}
       <Copyright />
     </Layout>
   );
