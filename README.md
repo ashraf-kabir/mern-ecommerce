@@ -19,7 +19,7 @@
     ```
     2. install frontend packages
     ```bash
-    cd client
+    cd frontend
     npm install
     ```
 3. go to the parent folder of mern-ecommerce & create .env for connection, JWT_SECRET, BRAINTREE_MERCHANT_ID, BRAINTREE_PUBLIC_KEY and BRAINTREE_PRIVATE_KEY.
@@ -38,10 +38,10 @@
     BRAINTREE_PUBLIC_KEY=YOUR_BRAINTREE_PUBLIC_KEY
     BRAINTREE_PRIVATE_KEY=YOUR_BRAINTREE_PRIVATE_KEY
     ```
-4.  create another .env file inside client directory for REACT_APP_API_URL.
+4.  create another .env file inside frontend directory for REACT_APP_API_URL.
 
     ```bash
-    cd mern-ecommerce/client
+    cd mern-ecommerce/frontend
     sudo nano .env
     ```
     ##### sample code for frontend .env
@@ -63,7 +63,7 @@
     ```
     #### note: both backend & frontend server will start at once with the above command.
 
-6. #### Database Structure: (Table: columns)
+6. #### Database Structure: (Schema)
     1. categories: _id, name, createdAt, updatedAt;
     2. orders:  _id, status, products (Array), transaction_id, amount, address, user (Object), createdAt, updatedAt
     3. products: _id, photo (Object), sold, name, description, price, category, shipping, quantity, createdAt, updatedAt
