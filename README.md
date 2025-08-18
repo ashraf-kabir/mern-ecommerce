@@ -92,5 +92,6 @@
     10. FRONTEND URL: http://localhost:5173/
     11. Project demo will be added soon...
 
+
 1. <b>Deployed on: (No longer available due to heroku free dyno plan has deprecated)</br> https://ecommerce-ak.herokuapp.com/
 2. raise a star to support me
