@@ -1,6 +1,6 @@
 # mern-ecommerce
 
-> Frontend-> React JS
+> Frontend-> Vite JS (React JS)
 
 > Backend-> Node JS & Express JS
 
@@ -89,6 +89,9 @@
     7. admin can create categories
     8. admin can view ordered products
     9. admin can change the status of a product (processing, shipped, delivered, etc.)
+    10. FRONTEND URL: http://localhost:5173/
+    11. Project demo will be added soon...
 
-6. <b>Deployed on: (No longer available due to heroku free dyno plan has deprecated)</br> https://ecommerce-ak.herokuapp.com/
-7. raise a star to support me
+
+1. <b>Deployed on: (No longer available due to heroku free dyno plan has deprecated)</br> https://ecommerce-ak.herokuapp.com/
+2. raise a star to support me
