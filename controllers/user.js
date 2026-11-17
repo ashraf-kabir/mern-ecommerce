@@ -87,7 +87,7 @@ exports.purchaseHistory = async (req, res) => {
 
 exports.users = async (req, res) => {
   try {
-    const users = await User.find().exec();
+    const users = await User.find().select('-hashed_password -salt -history').exec();
     res.json(users);
   } catch (err) {
     return res.status(400).json({
