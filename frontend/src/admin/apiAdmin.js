@@ -147,9 +147,13 @@ export const updateProduct = (productId, userId, token, product) => {
     .catch((err) => console.log(err));
 };
 
-export const getUsers = () => {
-  return fetch(`${API}/users`, {
+export const getUsers = (userId, token) => {
+  return fetch(`${API}/users/${userId}`, {
     method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
   })
     .then((response) => {
       return response.json();
